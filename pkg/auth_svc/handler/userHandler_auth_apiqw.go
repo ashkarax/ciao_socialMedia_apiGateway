@@ -8,20 +8,17 @@ import (
 	requestmodels_auth_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/auth_svc/infrastructure/models/request_models"
 	responsemodels_auth_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/auth_svc/infrastructure/models/response_models"
 	"github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/auth_svc/infrastructure/pb"
-	middleware_auth_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/auth_svc/middleware"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
 type UserHandler struct {
-	Client     pb.AuthServiceClient
-	Middleware *middleware_auth_apigw.Middleware
+	Client pb.AuthServiceClient
+	// Middleware *middleware_auth_apigw.Middleware
 }
 
-func NewAuthUserHandler(client *pb.AuthServiceClient, middleware *middleware_auth_apigw.Middleware) *UserHandler {
-	return &UserHandler{Client: *client,
-		Middleware: middleware,
-	}
+func NewAuthUserHandler(client *pb.AuthServiceClient) *UserHandler {
+	return &UserHandler{Client: *client}
 }
 
 func (svc *UserHandler) UserSignUp(ctx *fiber.Ctx) error {
@@ -409,11 +406,14 @@ func (svc *UserHandler) GetUserProfile(ctx *fiber.Ctx) error {
 	userId := ctx.Locals("userId")
 	UserId := fmt.Sprint(userId)
 
+	userBId := ctx.Query("userbid")
+
 	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
-	resp, err := svc.Client.GetUserProfile(context, &pb.RequestUserId{
-		UserId: UserId,
+	resp, err := svc.Client.GetUserProfile(context, &pb.RequestGetUserProfile{
+		UserId:  UserId,
+		UserBId: userBId,
 	})
 
 	if err != nil {
@@ -437,11 +437,23 @@ func (svc *UserHandler) GetUserProfile(ctx *fiber.Ctx) error {
 			})
 	}
 
+	var respStruct responsemodels_auth_apigw.UserProfile //used to show the zero count of posts,following,followers etc
+
+	respStruct.Name = resp.Name
+	respStruct.UserName = resp.UserName
+	respStruct.Bio = resp.Bio
+	respStruct.Links = resp.Links
+	respStruct.UserProfileImgURL = resp.ProfileImageURL
+	respStruct.PostsCount = uint(resp.PostsCount)
+	respStruct.FollowersCount = uint(resp.FollowerCount)
+	respStruct.FollowingCount = uint(resp.FollowingCount)
+
+	fmt.Println("--------", resp)
 	return ctx.Status(fiber.StatusOK).
 		JSON(responsemodels_auth_apigw.CommonResponse{
 			StatusCode: fiber.StatusOK,
 			Message:    "fetched user profile successfully",
-			Data:       resp,
+			Data:       respStruct,
 			Error:      nil,
 		})
 
@@ -525,6 +537,82 @@ func (svc *UserHandler) EditUserProfile(ctx *fiber.Ctx) error {
 		JSON(responsemodels_auth_apigw.CommonResponse{
 			StatusCode: fiber.StatusOK,
 			Message:    "edited user profile successfully",
+			Error:      nil,
+		})
+
+}
+
+func (svc *UserHandler) GetFollowersDetails(ctx *fiber.Ctx) error {
+
+	userId := ctx.Locals("userId")
+
+	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	resp, err := svc.Client.GetFollowersDetails(context, &pb.RequestUserId{UserId: fmt.Sprint(userId)})
+	if err != nil {
+		fmt.Println("----------auth service down--------")
+
+		return ctx.Status(fiber.StatusServiceUnavailable).
+			JSON(responsemodels_auth_apigw.CommonResponse{
+				StatusCode: fiber.StatusServiceUnavailable,
+				Message:    "can't fetch followers details",
+				Error:      err.Error(),
+			})
+	}
+
+	if resp.ErrorMessage != "" {
+		return ctx.Status(fiber.StatusBadRequest).
+			JSON(responsemodels_auth_apigw.CommonResponse{
+				StatusCode: fiber.StatusBadRequest,
+				Message:    "can't fetch followers details",
+				Error:      resp.ErrorMessage,
+			})
+	}
+
+	return ctx.Status(fiber.StatusOK).
+		JSON(responsemodels_auth_apigw.CommonResponse{
+			StatusCode: fiber.StatusOK,
+			Message:    "fetched followers details successfully",
+			Data:       resp,
+			Error:      nil,
+		})
+
+}
+
+func (svc *UserHandler) GetFollowingsDetails(ctx *fiber.Ctx) error {
+
+	userId := ctx.Locals("userId")
+
+	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	resp, err := svc.Client.GetFollowingsDetails(context, &pb.RequestUserId{UserId: fmt.Sprint(userId)})
+	if err != nil {
+		fmt.Println("----------auth service down--------")
+
+		return ctx.Status(fiber.StatusServiceUnavailable).
+			JSON(responsemodels_auth_apigw.CommonResponse{
+				StatusCode: fiber.StatusServiceUnavailable,
+				Message:    "can't fetch followings details",
+				Error:      err.Error(),
+			})
+	}
+
+	if resp.ErrorMessage != "" {
+		return ctx.Status(fiber.StatusBadRequest).
+			JSON(responsemodels_auth_apigw.CommonResponse{
+				StatusCode: fiber.StatusBadRequest,
+				Message:    "can't fetch followings details",
+				Error:      resp.ErrorMessage,
+			})
+	}
+
+	return ctx.Status(fiber.StatusOK).
+		JSON(responsemodels_auth_apigw.CommonResponse{
+			StatusCode: fiber.StatusOK,
+			Message:    "fetched followings details successfully",
+			Data:       resp,
 			Error:      nil,
 		})
 

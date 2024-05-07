@@ -45,3 +45,21 @@ type EditUserProfileResp struct {
 	Bio      string `json:"bio,omitempty"`
 	Links    string `json:"links,omitempty"`
 }
+
+type UserProfile struct {
+	UserId uint `json:"userid"  gorm:"column:id"`
+
+	Name              string `json:"Name"`
+	UserName          string `json:"UserName"`
+	Bio               string `json:"Bio"`
+	Links             string `json:"Links"`
+	UserProfileImgURL string `json:"UserProfileImageURL"`
+
+	PostsCount     uint `json:"PostsCount"`
+	FollowersCount uint `json:"FollowersCount"`
+	FollowingCount uint `json:"FollowingCount"`
+
+	//for userB only
+	FollowedBy      string `json:"Followedby,omitempty"`
+	FollowingStatus bool   `json:"Following_status,omitempty"`
+}

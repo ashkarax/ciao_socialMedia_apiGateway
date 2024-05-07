@@ -114,6 +114,132 @@ func (x *ResponseErrorMessage) GetErrorMessage() string {
 	return ""
 }
 
+type SingleResponseGetFollowers struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserId          uint64 `protobuf:"varint,4,opt,name=UserId,proto3" json:"UserId,omitempty"`
+	Name            string `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
+	UserName        string `protobuf:"bytes,2,opt,name=UserName,proto3" json:"UserName,omitempty"`
+	ProfileImageURL string `protobuf:"bytes,3,opt,name=ProfileImageURL,proto3" json:"ProfileImageURL,omitempty"`
+}
+
+func (x *SingleResponseGetFollowers) Reset() {
+	*x = SingleResponseGetFollowers{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SingleResponseGetFollowers) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SingleResponseGetFollowers) ProtoMessage() {}
+
+func (x *SingleResponseGetFollowers) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SingleResponseGetFollowers.ProtoReflect.Descriptor instead.
+func (*SingleResponseGetFollowers) Descriptor() ([]byte, []int) {
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *SingleResponseGetFollowers) GetUserId() uint64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *SingleResponseGetFollowers) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *SingleResponseGetFollowers) GetUserName() string {
+	if x != nil {
+		return x.UserName
+	}
+	return ""
+}
+
+func (x *SingleResponseGetFollowers) GetProfileImageURL() string {
+	if x != nil {
+		return x.ProfileImageURL
+	}
+	return ""
+}
+
+type ResponseGetUsersDetails struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ErrorMessage string                        `protobuf:"bytes,1,opt,name=ErrorMessage,proto3" json:"ErrorMessage,omitempty"`
+	UserData     []*SingleResponseGetFollowers `protobuf:"bytes,2,rep,name=UserData,proto3" json:"UserData,omitempty"`
+}
+
+func (x *ResponseGetUsersDetails) Reset() {
+	*x = ResponseGetUsersDetails{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ResponseGetUsersDetails) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResponseGetUsersDetails) ProtoMessage() {}
+
+func (x *ResponseGetUsersDetails) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResponseGetUsersDetails.ProtoReflect.Descriptor instead.
+func (*ResponseGetUsersDetails) Descriptor() ([]byte, []int) {
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ResponseGetUsersDetails) GetErrorMessage() string {
+	if x != nil {
+		return x.ErrorMessage
+	}
+	return ""
+}
+
+func (x *ResponseGetUsersDetails) GetUserData() []*SingleResponseGetFollowers {
+	if x != nil {
+		return x.UserData
+	}
+	return nil
+}
+
 type RequestEditUserProfile struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -129,7 +255,7 @@ type RequestEditUserProfile struct {
 func (x *RequestEditUserProfile) Reset() {
 	*x = RequestEditUserProfile{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[2]
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -142,7 +268,7 @@ func (x *RequestEditUserProfile) String() string {
 func (*RequestEditUserProfile) ProtoMessage() {}
 
 func (x *RequestEditUserProfile) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[2]
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -155,7 +281,7 @@ func (x *RequestEditUserProfile) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestEditUserProfile.ProtoReflect.Descriptor instead.
 func (*RequestEditUserProfile) Descriptor() ([]byte, []int) {
-	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{2}
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *RequestEditUserProfile) GetName() string {
@@ -193,6 +319,61 @@ func (x *RequestEditUserProfile) GetUserId() string {
 	return ""
 }
 
+type RequestGetUserProfile struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserId  string `protobuf:"bytes,1,opt,name=UserId,proto3" json:"UserId,omitempty"`
+	UserBId string `protobuf:"bytes,2,opt,name=UserBId,proto3" json:"UserBId,omitempty"`
+}
+
+func (x *RequestGetUserProfile) Reset() {
+	*x = RequestGetUserProfile{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RequestGetUserProfile) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RequestGetUserProfile) ProtoMessage() {}
+
+func (x *RequestGetUserProfile) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RequestGetUserProfile.ProtoReflect.Descriptor instead.
+func (*RequestGetUserProfile) Descriptor() ([]byte, []int) {
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *RequestGetUserProfile) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *RequestGetUserProfile) GetUserBId() string {
+	if x != nil {
+		return x.UserBId
+	}
+	return ""
+}
+
 type ResponseUserProfile struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -203,16 +384,16 @@ type ResponseUserProfile struct {
 	Bio             string `protobuf:"bytes,3,opt,name=Bio,proto3" json:"Bio,omitempty"`
 	Links           string `protobuf:"bytes,4,opt,name=Links,proto3" json:"Links,omitempty"`
 	ProfileImageURL string `protobuf:"bytes,5,opt,name=ProfileImageURL,proto3" json:"ProfileImageURL,omitempty"`
-	PostsCount      string `protobuf:"bytes,6,opt,name=PostsCount,proto3" json:"PostsCount,omitempty"`
-	FollowerCount   string `protobuf:"bytes,7,opt,name=FollowerCount,proto3" json:"FollowerCount,omitempty"`
-	FollowingCount  string `protobuf:"bytes,8,opt,name=FollowingCount,proto3" json:"FollowingCount,omitempty"`
+	PostsCount      uint64 `protobuf:"varint,6,opt,name=PostsCount,proto3" json:"PostsCount,omitempty"`
+	FollowerCount   uint64 `protobuf:"varint,7,opt,name=FollowerCount,proto3" json:"FollowerCount,omitempty"`
+	FollowingCount  uint64 `protobuf:"varint,8,opt,name=FollowingCount,proto3" json:"FollowingCount,omitempty"`
 	ErrorMessage    string `protobuf:"bytes,9,opt,name=ErrorMessage,proto3" json:"ErrorMessage,omitempty"`
 }
 
 func (x *ResponseUserProfile) Reset() {
 	*x = ResponseUserProfile{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[3]
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -225,7 +406,7 @@ func (x *ResponseUserProfile) String() string {
 func (*ResponseUserProfile) ProtoMessage() {}
 
 func (x *ResponseUserProfile) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[3]
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -238,7 +419,7 @@ func (x *ResponseUserProfile) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResponseUserProfile.ProtoReflect.Descriptor instead.
 func (*ResponseUserProfile) Descriptor() ([]byte, []int) {
-	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{3}
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ResponseUserProfile) GetName() string {
@@ -276,25 +457,25 @@ func (x *ResponseUserProfile) GetProfileImageURL() string {
 	return ""
 }
 
-func (x *ResponseUserProfile) GetPostsCount() string {
+func (x *ResponseUserProfile) GetPostsCount() uint64 {
 	if x != nil {
 		return x.PostsCount
 	}
-	return ""
+	return 0
 }
 
-func (x *ResponseUserProfile) GetFollowerCount() string {
+func (x *ResponseUserProfile) GetFollowerCount() uint64 {
 	if x != nil {
 		return x.FollowerCount
 	}
-	return ""
+	return 0
 }
 
-func (x *ResponseUserProfile) GetFollowingCount() string {
+func (x *ResponseUserProfile) GetFollowingCount() uint64 {
 	if x != nil {
 		return x.FollowingCount
 	}
-	return ""
+	return 0
 }
 
 func (x *ResponseUserProfile) GetErrorMessage() string {
@@ -316,7 +497,7 @@ type RequestAccessGenerator struct {
 func (x *RequestAccessGenerator) Reset() {
 	*x = RequestAccessGenerator{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[4]
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -329,7 +510,7 @@ func (x *RequestAccessGenerator) String() string {
 func (*RequestAccessGenerator) ProtoMessage() {}
 
 func (x *RequestAccessGenerator) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[4]
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -342,7 +523,7 @@ func (x *RequestAccessGenerator) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestAccessGenerator.ProtoReflect.Descriptor instead.
 func (*RequestAccessGenerator) Descriptor() ([]byte, []int) {
-	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{4}
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *RequestAccessGenerator) GetAccessToken() string {
@@ -371,7 +552,7 @@ type ResponseAccessGenerator struct {
 func (x *ResponseAccessGenerator) Reset() {
 	*x = ResponseAccessGenerator{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[5]
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -384,7 +565,7 @@ func (x *ResponseAccessGenerator) String() string {
 func (*ResponseAccessGenerator) ProtoMessage() {}
 
 func (x *ResponseAccessGenerator) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[5]
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -397,7 +578,7 @@ func (x *ResponseAccessGenerator) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResponseAccessGenerator.ProtoReflect.Descriptor instead.
 func (*ResponseAccessGenerator) Descriptor() ([]byte, []int) {
-	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{5}
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ResponseAccessGenerator) GetAccesToken() string {
@@ -425,7 +606,7 @@ type RequestVerifyAccess struct {
 func (x *RequestVerifyAccess) Reset() {
 	*x = RequestVerifyAccess{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[6]
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -438,7 +619,7 @@ func (x *RequestVerifyAccess) String() string {
 func (*RequestVerifyAccess) ProtoMessage() {}
 
 func (x *RequestVerifyAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[6]
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -451,7 +632,7 @@ func (x *RequestVerifyAccess) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestVerifyAccess.ProtoReflect.Descriptor instead.
 func (*RequestVerifyAccess) Descriptor() ([]byte, []int) {
-	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{6}
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *RequestVerifyAccess) GetAccessToken() string {
@@ -473,7 +654,7 @@ type ResponseVerifyAccess struct {
 func (x *ResponseVerifyAccess) Reset() {
 	*x = ResponseVerifyAccess{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[7]
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -486,7 +667,7 @@ func (x *ResponseVerifyAccess) String() string {
 func (*ResponseVerifyAccess) ProtoMessage() {}
 
 func (x *ResponseVerifyAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[7]
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -499,7 +680,7 @@ func (x *ResponseVerifyAccess) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResponseVerifyAccess.ProtoReflect.Descriptor instead.
 func (*ResponseVerifyAccess) Descriptor() ([]byte, []int) {
-	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{7}
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ResponseVerifyAccess) GetUserId() string {
@@ -530,7 +711,7 @@ type RequestResetPass struct {
 func (x *RequestResetPass) Reset() {
 	*x = RequestResetPass{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[8]
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -543,7 +724,7 @@ func (x *RequestResetPass) String() string {
 func (*RequestResetPass) ProtoMessage() {}
 
 func (x *RequestResetPass) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[8]
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -556,7 +737,7 @@ func (x *RequestResetPass) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestResetPass.ProtoReflect.Descriptor instead.
 func (*RequestResetPass) Descriptor() ([]byte, []int) {
-	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{8}
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *RequestResetPass) GetOtp() string {
@@ -598,7 +779,7 @@ type RequestForgotPass struct {
 func (x *RequestForgotPass) Reset() {
 	*x = RequestForgotPass{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[9]
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -611,7 +792,7 @@ func (x *RequestForgotPass) String() string {
 func (*RequestForgotPass) ProtoMessage() {}
 
 func (x *RequestForgotPass) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[9]
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -624,7 +805,7 @@ func (x *RequestForgotPass) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestForgotPass.ProtoReflect.Descriptor instead.
 func (*RequestForgotPass) Descriptor() ([]byte, []int) {
-	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{9}
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *RequestForgotPass) GetEmail() string {
@@ -646,7 +827,7 @@ type ResponseForgotPass struct {
 func (x *ResponseForgotPass) Reset() {
 	*x = ResponseForgotPass{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[10]
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -659,7 +840,7 @@ func (x *ResponseForgotPass) String() string {
 func (*ResponseForgotPass) ProtoMessage() {}
 
 func (x *ResponseForgotPass) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[10]
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -672,7 +853,7 @@ func (x *ResponseForgotPass) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResponseForgotPass.ProtoReflect.Descriptor instead.
 func (*ResponseForgotPass) Descriptor() ([]byte, []int) {
-	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{10}
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ResponseForgotPass) GetToken() string {
@@ -701,7 +882,7 @@ type RequestUserLogin struct {
 func (x *RequestUserLogin) Reset() {
 	*x = RequestUserLogin{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[11]
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -714,7 +895,7 @@ func (x *RequestUserLogin) String() string {
 func (*RequestUserLogin) ProtoMessage() {}
 
 func (x *RequestUserLogin) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[11]
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -727,7 +908,7 @@ func (x *RequestUserLogin) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestUserLogin.ProtoReflect.Descriptor instead.
 func (*RequestUserLogin) Descriptor() ([]byte, []int) {
-	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{11}
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *RequestUserLogin) GetEmail() string {
@@ -757,7 +938,7 @@ type ResponseUserLogin struct {
 func (x *ResponseUserLogin) Reset() {
 	*x = ResponseUserLogin{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[12]
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -770,7 +951,7 @@ func (x *ResponseUserLogin) String() string {
 func (*ResponseUserLogin) ProtoMessage() {}
 
 func (x *ResponseUserLogin) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[12]
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -783,7 +964,7 @@ func (x *ResponseUserLogin) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResponseUserLogin.ProtoReflect.Descriptor instead.
 func (*ResponseUserLogin) Descriptor() ([]byte, []int) {
-	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{12}
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ResponseUserLogin) GetAccessToken() string {
@@ -819,7 +1000,7 @@ type RequestOtpVefification struct {
 func (x *RequestOtpVefification) Reset() {
 	*x = RequestOtpVefification{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[13]
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -832,7 +1013,7 @@ func (x *RequestOtpVefification) String() string {
 func (*RequestOtpVefification) ProtoMessage() {}
 
 func (x *RequestOtpVefification) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[13]
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -845,7 +1026,7 @@ func (x *RequestOtpVefification) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RequestOtpVefification.ProtoReflect.Descriptor instead.
 func (*RequestOtpVefification) Descriptor() ([]byte, []int) {
-	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{13}
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *RequestOtpVefification) GetTempToken() string {
@@ -876,7 +1057,7 @@ type ResponseOtpVerification struct {
 func (x *ResponseOtpVerification) Reset() {
 	*x = ResponseOtpVerification{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[14]
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -889,7 +1070,7 @@ func (x *ResponseOtpVerification) String() string {
 func (*ResponseOtpVerification) ProtoMessage() {}
 
 func (x *ResponseOtpVerification) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[14]
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -902,7 +1083,7 @@ func (x *ResponseOtpVerification) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResponseOtpVerification.ProtoReflect.Descriptor instead.
 func (*ResponseOtpVerification) Descriptor() ([]byte, []int) {
-	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{14}
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ResponseOtpVerification) GetAccessToken() string {
@@ -948,7 +1129,7 @@ type SignUpRequest struct {
 func (x *SignUpRequest) Reset() {
 	*x = SignUpRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[15]
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -961,7 +1142,7 @@ func (x *SignUpRequest) String() string {
 func (*SignUpRequest) ProtoMessage() {}
 
 func (x *SignUpRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[15]
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -974,7 +1155,7 @@ func (x *SignUpRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignUpRequest.ProtoReflect.Descriptor instead.
 func (*SignUpRequest) Descriptor() ([]byte, []int) {
-	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{15}
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *SignUpRequest) GetUserName() string {
@@ -1024,7 +1205,7 @@ type SignUpResponse struct {
 func (x *SignUpResponse) Reset() {
 	*x = SignUpResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[16]
+		mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1037,7 +1218,7 @@ func (x *SignUpResponse) String() string {
 func (*SignUpResponse) ProtoMessage() {}
 
 func (x *SignUpResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[16]
+	mi := &file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1050,7 +1231,7 @@ func (x *SignUpResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignUpResponse.ProtoReflect.Descriptor instead.
 func (*SignUpResponse) Descriptor() ([]byte, []int) {
-	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{16}
+	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *SignUpResponse) GetToken() string {
@@ -1079,16 +1260,38 @@ var file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDesc = []byte{
 	0x22, 0x3a, 0x0a, 0x14, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x45, 0x72, 0x72, 0x6f,
 	0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x22, 0x0a, 0x0c, 0x45, 0x72, 0x72, 0x6f,
 	0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c,
-	0x45, 0x72, 0x72, 0x6f, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x88, 0x01, 0x0a,
-	0x16, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x45, 0x64, 0x69, 0x74, 0x55, 0x73, 0x65, 0x72,
-	0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x4e, 0x61, 0x6d, 0x65, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x55,
-	0x73, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x55,
-	0x73, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x42, 0x69, 0x6f, 0x18, 0x03,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x42, 0x69, 0x6f, 0x12, 0x14, 0x0a, 0x05, 0x4c, 0x69, 0x6e,
-	0x6b, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x4c, 0x69, 0x6e, 0x6b, 0x73, 0x12,
-	0x16, 0x0a, 0x06, 0x55, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x06, 0x55, 0x73, 0x65, 0x72, 0x49, 0x64, 0x22, 0xa9, 0x02, 0x0a, 0x13, 0x52, 0x65, 0x73, 0x70,
+	0x45, 0x72, 0x72, 0x6f, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x8e, 0x01, 0x0a,
+	0x1a, 0x53, 0x69, 0x6e, 0x67, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x47,
+	0x65, 0x74, 0x46, 0x6f, 0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x72, 0x73, 0x12, 0x16, 0x0a, 0x06, 0x55,
+	0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x55, 0x73, 0x65,
+	0x72, 0x49, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x04, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x55, 0x73, 0x65, 0x72, 0x4e,
+	0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x55, 0x73, 0x65, 0x72, 0x4e,
+	0x61, 0x6d, 0x65, 0x12, 0x28, 0x0a, 0x0f, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x49, 0x6d,
+	0x61, 0x67, 0x65, 0x55, 0x52, 0x4c, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0f, 0x50, 0x72,
+	0x6f, 0x66, 0x69, 0x6c, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x55, 0x52, 0x4c, 0x22, 0x81, 0x01,
+	0x0a, 0x17, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65,
+	0x72, 0x73, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x73, 0x12, 0x22, 0x0a, 0x0c, 0x45, 0x72, 0x72,
+	0x6f, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x0c, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x42, 0x0a,
+	0x08, 0x55, 0x73, 0x65, 0x72, 0x44, 0x61, 0x74, 0x61, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32,
+	0x26, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x53, 0x69, 0x6e,
+	0x67, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x47, 0x65, 0x74, 0x46, 0x6f,
+	0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x72, 0x73, 0x52, 0x08, 0x55, 0x73, 0x65, 0x72, 0x44, 0x61, 0x74,
+	0x61, 0x22, 0x88, 0x01, 0x0a, 0x16, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x45, 0x64, 0x69,
+	0x74, 0x55, 0x73, 0x65, 0x72, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x12, 0x0a, 0x04,
+	0x4e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x4e, 0x61, 0x6d, 0x65,
+	0x12, 0x1a, 0x0a, 0x08, 0x55, 0x73, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x08, 0x55, 0x73, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x10, 0x0a, 0x03,
+	0x42, 0x69, 0x6f, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x42, 0x69, 0x6f, 0x12, 0x14,
+	0x0a, 0x05, 0x4c, 0x69, 0x6e, 0x6b, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x4c,
+	0x69, 0x6e, 0x6b, 0x73, 0x12, 0x16, 0x0a, 0x06, 0x55, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18, 0x05,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x55, 0x73, 0x65, 0x72, 0x49, 0x64, 0x22, 0x49, 0x0a, 0x15,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x50, 0x72,
+	0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x55, 0x73, 0x65, 0x72, 0x49, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x55, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x18, 0x0a,
+	0x07, 0x55, 0x73, 0x65, 0x72, 0x42, 0x49, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07,
+	0x55, 0x73, 0x65, 0x72, 0x42, 0x49, 0x64, 0x22, 0xa9, 0x02, 0x0a, 0x13, 0x52, 0x65, 0x73, 0x70,
 	0x6f, 0x6e, 0x73, 0x65, 0x55, 0x73, 0x65, 0x72, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12,
 	0x12, 0x0a, 0x04, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x4e,
 	0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x55, 0x73, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x18,
@@ -1099,11 +1302,11 @@ var file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDesc = []byte{
 	0x6c, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x55, 0x52, 0x4c, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09,
 	0x52, 0x0f, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x49, 0x6d, 0x61, 0x67, 0x65, 0x55, 0x52,
 	0x4c, 0x12, 0x1e, 0x0a, 0x0a, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x18,
-	0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x43, 0x6f, 0x75, 0x6e,
+	0x06, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0a, 0x50, 0x6f, 0x73, 0x74, 0x73, 0x43, 0x6f, 0x75, 0x6e,
 	0x74, 0x12, 0x24, 0x0a, 0x0d, 0x46, 0x6f, 0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x72, 0x43, 0x6f, 0x75,
-	0x6e, 0x74, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x46, 0x6f, 0x6c, 0x6c, 0x6f, 0x77,
+	0x6e, 0x74, 0x18, 0x07, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0d, 0x46, 0x6f, 0x6c, 0x6c, 0x6f, 0x77,
 	0x65, 0x72, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x26, 0x0a, 0x0e, 0x46, 0x6f, 0x6c, 0x6c, 0x6f,
-	0x77, 0x69, 0x6e, 0x67, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x77, 0x69, 0x6e, 0x67, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x08, 0x20, 0x01, 0x28, 0x04, 0x52,
 	0x0e, 0x46, 0x6f, 0x6c, 0x6c, 0x6f, 0x77, 0x69, 0x6e, 0x67, 0x43, 0x6f, 0x75, 0x6e, 0x74, 0x12,
 	0x22, 0x0a, 0x0c, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18,
 	0x09, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x4d, 0x65, 0x73, 0x73,
@@ -1185,7 +1388,7 @@ var file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDesc = []byte{
 	0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x54, 0x6f, 0x6b,
 	0x65, 0x6e, 0x12, 0x22, 0x0a, 0x0c, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61,
 	0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x4d,
-	0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x32, 0x80, 0x06, 0x0a, 0x0b, 0x41, 0x75, 0x74, 0x68, 0x53,
+	0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x32, 0xb7, 0x07, 0x0a, 0x0b, 0x41, 0x75, 0x74, 0x68, 0x53,
 	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x43, 0x0a, 0x0a, 0x55, 0x73, 0x65, 0x72, 0x53, 0x69,
 	0x67, 0x6e, 0x55, 0x70, 0x12, 0x19, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x2e, 0x53, 0x69, 0x67, 0x6e, 0x55, 0x70, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
@@ -1223,20 +1426,31 @@ var file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDesc = []byte{
 	0x63, 0x65, 0x73, 0x73, 0x47, 0x65, 0x6e, 0x65, 0x72, 0x61, 0x74, 0x6f, 0x72, 0x1a, 0x23, 0x2e,
 	0x61, 0x75, 0x74, 0x68, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f,
 	0x6e, 0x73, 0x65, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x47, 0x65, 0x6e, 0x65, 0x72, 0x61, 0x74,
-	0x6f, 0x72, 0x12, 0x4c, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x50, 0x72, 0x6f,
-	0x66, 0x69, 0x6c, 0x65, 0x12, 0x19, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x55, 0x73, 0x65, 0x72, 0x49, 0x64, 0x1a,
-	0x1f, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x55, 0x73, 0x65, 0x72, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65,
-	0x12, 0x57, 0x0a, 0x0f, 0x45, 0x64, 0x69, 0x74, 0x55, 0x73, 0x65, 0x72, 0x50, 0x72, 0x6f, 0x66,
-	0x69, 0x6c, 0x65, 0x12, 0x22, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x45, 0x64, 0x69, 0x74, 0x55, 0x73, 0x65, 0x72,
-	0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x1a, 0x20, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x45, 0x72, 0x72,
-	0x6f, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x42, 0x22, 0x5a, 0x20, 0x2e, 0x2f, 0x70,
-	0x6b, 0x67, 0x2f, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x73, 0x76, 0x63, 0x2f, 0x69, 0x6e, 0x66, 0x72,
-	0x61, 0x73, 0x74, 0x72, 0x75, 0x63, 0x74, 0x75, 0x72, 0x65, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x72, 0x12, 0x54, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x50, 0x72, 0x6f,
+	0x66, 0x69, 0x6c, 0x65, 0x12, 0x21, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72,
+	0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x1a, 0x1f, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x55, 0x73, 0x65,
+	0x72, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x57, 0x0a, 0x0f, 0x45, 0x64, 0x69, 0x74,
+	0x55, 0x73, 0x65, 0x72, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x22, 0x2e, 0x61, 0x75,
+	0x74, 0x68, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x45, 0x64, 0x69, 0x74, 0x55, 0x73, 0x65, 0x72, 0x50, 0x72, 0x6f, 0x66, 0x69, 0x6c, 0x65, 0x1a,
+	0x20, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67,
+	0x65, 0x12, 0x55, 0x0a, 0x13, 0x47, 0x65, 0x74, 0x46, 0x6f, 0x6c, 0x6c, 0x6f, 0x77, 0x65, 0x72,
+	0x73, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x73, 0x12, 0x19, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x55, 0x73, 0x65,
+	0x72, 0x49, 0x64, 0x1a, 0x23, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72,
+	0x73, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x73, 0x12, 0x56, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x46,
+	0x6f, 0x6c, 0x6c, 0x6f, 0x77, 0x69, 0x6e, 0x67, 0x73, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x73,
+	0x12, 0x19, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x55, 0x73, 0x65, 0x72, 0x49, 0x64, 0x1a, 0x23, 0x2e, 0x61, 0x75,
+	0x74, 0x68, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x73, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x73,
+	0x42, 0x22, 0x5a, 0x20, 0x2e, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x61, 0x75, 0x74, 0x68, 0x5f, 0x73,
+	0x76, 0x63, 0x2f, 0x69, 0x6e, 0x66, 0x72, 0x61, 0x73, 0x74, 0x72, 0x75, 0x63, 0x74, 0x75, 0x72,
+	0x65, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1251,50 +1465,58 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescGZIP() []byte {
 	return file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDescData
 }
 
-var file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_pkg_auth_svc_infrastructure_pb_auth_proto_goTypes = []interface{}{
-	(*RequestUserId)(nil),           // 0: auth_proto.RequestUserId
-	(*ResponseErrorMessage)(nil),    // 1: auth_proto.ResponseErrorMessage
-	(*RequestEditUserProfile)(nil),  // 2: auth_proto.RequestEditUserProfile
-	(*ResponseUserProfile)(nil),     // 3: auth_proto.ResponseUserProfile
-	(*RequestAccessGenerator)(nil),  // 4: auth_proto.RequestAccessGenerator
-	(*ResponseAccessGenerator)(nil), // 5: auth_proto.ResponseAccessGenerator
-	(*RequestVerifyAccess)(nil),     // 6: auth_proto.RequestVerifyAccess
-	(*ResponseVerifyAccess)(nil),    // 7: auth_proto.ResponseVerifyAccess
-	(*RequestResetPass)(nil),        // 8: auth_proto.RequestResetPass
-	(*RequestForgotPass)(nil),       // 9: auth_proto.RequestForgotPass
-	(*ResponseForgotPass)(nil),      // 10: auth_proto.ResponseForgotPass
-	(*RequestUserLogin)(nil),        // 11: auth_proto.RequestUserLogin
-	(*ResponseUserLogin)(nil),       // 12: auth_proto.ResponseUserLogin
-	(*RequestOtpVefification)(nil),  // 13: auth_proto.RequestOtpVefification
-	(*ResponseOtpVerification)(nil), // 14: auth_proto.ResponseOtpVerification
-	(*SignUpRequest)(nil),           // 15: auth_proto.SignUpRequest
-	(*SignUpResponse)(nil),          // 16: auth_proto.SignUpResponse
+	(*RequestUserId)(nil),              // 0: auth_proto.RequestUserId
+	(*ResponseErrorMessage)(nil),       // 1: auth_proto.ResponseErrorMessage
+	(*SingleResponseGetFollowers)(nil), // 2: auth_proto.SingleResponseGetFollowers
+	(*ResponseGetUsersDetails)(nil),    // 3: auth_proto.ResponseGetUsersDetails
+	(*RequestEditUserProfile)(nil),     // 4: auth_proto.RequestEditUserProfile
+	(*RequestGetUserProfile)(nil),      // 5: auth_proto.RequestGetUserProfile
+	(*ResponseUserProfile)(nil),        // 6: auth_proto.ResponseUserProfile
+	(*RequestAccessGenerator)(nil),     // 7: auth_proto.RequestAccessGenerator
+	(*ResponseAccessGenerator)(nil),    // 8: auth_proto.ResponseAccessGenerator
+	(*RequestVerifyAccess)(nil),        // 9: auth_proto.RequestVerifyAccess
+	(*ResponseVerifyAccess)(nil),       // 10: auth_proto.ResponseVerifyAccess
+	(*RequestResetPass)(nil),           // 11: auth_proto.RequestResetPass
+	(*RequestForgotPass)(nil),          // 12: auth_proto.RequestForgotPass
+	(*ResponseForgotPass)(nil),         // 13: auth_proto.ResponseForgotPass
+	(*RequestUserLogin)(nil),           // 14: auth_proto.RequestUserLogin
+	(*ResponseUserLogin)(nil),          // 15: auth_proto.ResponseUserLogin
+	(*RequestOtpVefification)(nil),     // 16: auth_proto.RequestOtpVefification
+	(*ResponseOtpVerification)(nil),    // 17: auth_proto.ResponseOtpVerification
+	(*SignUpRequest)(nil),              // 18: auth_proto.SignUpRequest
+	(*SignUpResponse)(nil),             // 19: auth_proto.SignUpResponse
 }
 var file_pkg_auth_svc_infrastructure_pb_auth_proto_depIdxs = []int32{
-	15, // 0: auth_proto.AuthService.UserSignUp:input_type -> auth_proto.SignUpRequest
-	13, // 1: auth_proto.AuthService.UserOTPVerication:input_type -> auth_proto.RequestOtpVefification
-	11, // 2: auth_proto.AuthService.UserLogin:input_type -> auth_proto.RequestUserLogin
-	9,  // 3: auth_proto.AuthService.ForgotPasswordRequest:input_type -> auth_proto.RequestForgotPass
-	8,  // 4: auth_proto.AuthService.ResetPassword:input_type -> auth_proto.RequestResetPass
-	6,  // 5: auth_proto.AuthService.VerifyAccessToken:input_type -> auth_proto.RequestVerifyAccess
-	4,  // 6: auth_proto.AuthService.AccessRegenerator:input_type -> auth_proto.RequestAccessGenerator
-	0,  // 7: auth_proto.AuthService.GetUserProfile:input_type -> auth_proto.RequestUserId
-	2,  // 8: auth_proto.AuthService.EditUserProfile:input_type -> auth_proto.RequestEditUserProfile
-	16, // 9: auth_proto.AuthService.UserSignUp:output_type -> auth_proto.SignUpResponse
-	14, // 10: auth_proto.AuthService.UserOTPVerication:output_type -> auth_proto.ResponseOtpVerification
-	12, // 11: auth_proto.AuthService.UserLogin:output_type -> auth_proto.ResponseUserLogin
-	10, // 12: auth_proto.AuthService.ForgotPasswordRequest:output_type -> auth_proto.ResponseForgotPass
-	1,  // 13: auth_proto.AuthService.ResetPassword:output_type -> auth_proto.ResponseErrorMessage
-	7,  // 14: auth_proto.AuthService.VerifyAccessToken:output_type -> auth_proto.ResponseVerifyAccess
-	5,  // 15: auth_proto.AuthService.AccessRegenerator:output_type -> auth_proto.ResponseAccessGenerator
-	3,  // 16: auth_proto.AuthService.GetUserProfile:output_type -> auth_proto.ResponseUserProfile
-	1,  // 17: auth_proto.AuthService.EditUserProfile:output_type -> auth_proto.ResponseErrorMessage
-	9,  // [9:18] is the sub-list for method output_type
-	0,  // [0:9] is the sub-list for method input_type
-	0,  // [0:0] is the sub-list for extension type_name
-	0,  // [0:0] is the sub-list for extension extendee
-	0,  // [0:0] is the sub-list for field type_name
+	2,  // 0: auth_proto.ResponseGetUsersDetails.UserData:type_name -> auth_proto.SingleResponseGetFollowers
+	18, // 1: auth_proto.AuthService.UserSignUp:input_type -> auth_proto.SignUpRequest
+	16, // 2: auth_proto.AuthService.UserOTPVerication:input_type -> auth_proto.RequestOtpVefification
+	14, // 3: auth_proto.AuthService.UserLogin:input_type -> auth_proto.RequestUserLogin
+	12, // 4: auth_proto.AuthService.ForgotPasswordRequest:input_type -> auth_proto.RequestForgotPass
+	11, // 5: auth_proto.AuthService.ResetPassword:input_type -> auth_proto.RequestResetPass
+	9,  // 6: auth_proto.AuthService.VerifyAccessToken:input_type -> auth_proto.RequestVerifyAccess
+	7,  // 7: auth_proto.AuthService.AccessRegenerator:input_type -> auth_proto.RequestAccessGenerator
+	5,  // 8: auth_proto.AuthService.GetUserProfile:input_type -> auth_proto.RequestGetUserProfile
+	4,  // 9: auth_proto.AuthService.EditUserProfile:input_type -> auth_proto.RequestEditUserProfile
+	0,  // 10: auth_proto.AuthService.GetFollowersDetails:input_type -> auth_proto.RequestUserId
+	0,  // 11: auth_proto.AuthService.GetFollowingsDetails:input_type -> auth_proto.RequestUserId
+	19, // 12: auth_proto.AuthService.UserSignUp:output_type -> auth_proto.SignUpResponse
+	17, // 13: auth_proto.AuthService.UserOTPVerication:output_type -> auth_proto.ResponseOtpVerification
+	15, // 14: auth_proto.AuthService.UserLogin:output_type -> auth_proto.ResponseUserLogin
+	13, // 15: auth_proto.AuthService.ForgotPasswordRequest:output_type -> auth_proto.ResponseForgotPass
+	1,  // 16: auth_proto.AuthService.ResetPassword:output_type -> auth_proto.ResponseErrorMessage
+	10, // 17: auth_proto.AuthService.VerifyAccessToken:output_type -> auth_proto.ResponseVerifyAccess
+	8,  // 18: auth_proto.AuthService.AccessRegenerator:output_type -> auth_proto.ResponseAccessGenerator
+	6,  // 19: auth_proto.AuthService.GetUserProfile:output_type -> auth_proto.ResponseUserProfile
+	1,  // 20: auth_proto.AuthService.EditUserProfile:output_type -> auth_proto.ResponseErrorMessage
+	3,  // 21: auth_proto.AuthService.GetFollowersDetails:output_type -> auth_proto.ResponseGetUsersDetails
+	3,  // 22: auth_proto.AuthService.GetFollowingsDetails:output_type -> auth_proto.ResponseGetUsersDetails
+	12, // [12:23] is the sub-list for method output_type
+	1,  // [1:12] is the sub-list for method input_type
+	1,  // [1:1] is the sub-list for extension type_name
+	1,  // [1:1] is the sub-list for extension extendee
+	0,  // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_pkg_auth_svc_infrastructure_pb_auth_proto_init() }
@@ -1328,7 +1550,7 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_init() {
 			}
 		}
 		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RequestEditUserProfile); i {
+			switch v := v.(*SingleResponseGetFollowers); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1340,7 +1562,7 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_init() {
 			}
 		}
 		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ResponseUserProfile); i {
+			switch v := v.(*ResponseGetUsersDetails); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1352,7 +1574,7 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_init() {
 			}
 		}
 		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RequestAccessGenerator); i {
+			switch v := v.(*RequestEditUserProfile); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1364,7 +1586,7 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_init() {
 			}
 		}
 		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ResponseAccessGenerator); i {
+			switch v := v.(*RequestGetUserProfile); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1376,7 +1598,7 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_init() {
 			}
 		}
 		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RequestVerifyAccess); i {
+			switch v := v.(*ResponseUserProfile); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1388,7 +1610,7 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_init() {
 			}
 		}
 		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ResponseVerifyAccess); i {
+			switch v := v.(*RequestAccessGenerator); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1400,7 +1622,7 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_init() {
 			}
 		}
 		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RequestResetPass); i {
+			switch v := v.(*ResponseAccessGenerator); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1412,7 +1634,7 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_init() {
 			}
 		}
 		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RequestForgotPass); i {
+			switch v := v.(*RequestVerifyAccess); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1424,7 +1646,7 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_init() {
 			}
 		}
 		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ResponseForgotPass); i {
+			switch v := v.(*ResponseVerifyAccess); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1436,7 +1658,7 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_init() {
 			}
 		}
 		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RequestUserLogin); i {
+			switch v := v.(*RequestResetPass); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1448,7 +1670,7 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_init() {
 			}
 		}
 		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ResponseUserLogin); i {
+			switch v := v.(*RequestForgotPass); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1460,7 +1682,7 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_init() {
 			}
 		}
 		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RequestOtpVefification); i {
+			switch v := v.(*ResponseForgotPass); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1472,7 +1694,7 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_init() {
 			}
 		}
 		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ResponseOtpVerification); i {
+			switch v := v.(*RequestUserLogin); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1484,7 +1706,7 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_init() {
 			}
 		}
 		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SignUpRequest); i {
+			switch v := v.(*ResponseUserLogin); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1496,6 +1718,42 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_init() {
 			}
 		}
 		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RequestOtpVefification); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ResponseOtpVerification); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SignUpRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_auth_svc_infrastructure_pb_auth_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*SignUpResponse); i {
 			case 0:
 				return &v.state
@@ -1514,7 +1772,7 @@ func file_pkg_auth_svc_infrastructure_pb_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_pkg_auth_svc_infrastructure_pb_auth_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   17,
+			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

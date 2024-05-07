@@ -20,9 +20,9 @@ func InitAuthClient(app *fiber.App, config *config_apigw.Config) (*middleware_au
 
 	middleware := middleware_auth_apigw.NewAuthMiddleware(client)
 
-	userHandler := handler_auth_apigw.NewAuthUserHandler(client, middleware)
+	userHandler := handler_auth_apigw.NewAuthUserHandler(client)
 
-	router_auth_apigw.UserRoutes(app, config, userHandler, middleware)
+	router_auth_apigw.AuthUserRoutes(app, userHandler, middleware)
 
 	return middleware, nil
 }

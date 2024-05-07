@@ -1,0 +1,78 @@
+syntax="proto3";
+
+package postnrel_proto;
+
+option go_package="./pkg/postNrelation_svc/infrastructure/pb";
+
+service PostNrelService{
+    rpc AddNewPost(RequestAddPost) returns (ResponseErrorMessageOnly);
+    rpc GetAllPostByUser(RequestGetAllPosts) returns (ResponseUserPosts);
+    rpc DeletePost(RequestDeletePost) returns (ResponseErrorMessageOnly);
+    rpc EditPost(RequestEditPost) returns (ResponseErrorMessageOnly);
+    rpc Follow(RequestFollowUnFollow) returns (ResponseErrorMessageOnly);
+    rpc UnFollow(RequestFollowUnFollow) returns (ResponseErrorMessageOnly);
+
+}
+
+message RequestUserIdOnly{
+    string UserId=1;
+}
+message ResponseErrorMessageOnly{
+    string ErrorMessage=1;
+}
+
+message RequestFollowUnFollow{
+    string UserId=1;
+    string UserBId=2;
+}
+
+message RequestEditPost{
+    string UserId=1;
+    string PostId=2;
+    string Caption=3;
+}
+
+message RequestDeletePost{
+    string UserId=1;
+    string PostId=2;
+}
+
+message PostsDataModel{
+uint64 UserId=1;
+string UserName=2;
+string UserProfileImgURL=3;
+uint64 PostId   =4;    
+bool LikeStatus=5;
+string Caption=6;    
+string LikesCount    =7;
+string CommentsCount =8;
+string 	PostAge    =9;
+repeated string MediaUrl =10;
+}
+
+message RequestGetAllPosts{
+    string UserId=1;
+    string Limit=2;
+    string OffSet=3;
+}
+
+message ResponseUserPosts{
+    repeated PostsDataModel PostsData=1;
+    string ErrorMessage=2;
+}
+
+message singleMedia{
+    bytes media=1;
+    string ContentType=2;
+}
+
+message RequestAddPost{
+    string UserId=1;
+    string Caption=2;
+    repeated singleMedia Media=3;
+}
+
+
+
+
+

@@ -7,11 +7,11 @@ import (
 )
 
 type Config struct {
-	Port       string `mapstructure:"PORT"`
-	AuthSvcUrl string `mapstructure:"AUTH_SVC_URL"`
-	ApiKey     string `mapstructure:"API_KEY"`
+	Port           string `mapstructure:"PORT"`
+	AuthSvcUrl     string `mapstructure:"AUTH_SVC_URL"`
+	ApiKey         string `mapstructure:"API_KEY"`
+	PostNrelSvcUrl string `mapstructure:"POSTNREL_SVC_URL"`
 
-	//ProductSvcUrl string `mapstructure:"PRODUCT_SVC_URL"`
 	//OrderSvcUrl   string `mapstructure:"ORDER_SVC_URL"`
 }
 

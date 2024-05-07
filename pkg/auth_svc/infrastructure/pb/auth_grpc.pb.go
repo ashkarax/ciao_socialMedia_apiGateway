@@ -29,8 +29,10 @@ type AuthServiceClient interface {
 	ResetPassword(ctx context.Context, in *RequestResetPass, opts ...grpc.CallOption) (*ResponseErrorMessage, error)
 	VerifyAccessToken(ctx context.Context, in *RequestVerifyAccess, opts ...grpc.CallOption) (*ResponseVerifyAccess, error)
 	AccessRegenerator(ctx context.Context, in *RequestAccessGenerator, opts ...grpc.CallOption) (*ResponseAccessGenerator, error)
-	GetUserProfile(ctx context.Context, in *RequestUserId, opts ...grpc.CallOption) (*ResponseUserProfile, error)
+	GetUserProfile(ctx context.Context, in *RequestGetUserProfile, opts ...grpc.CallOption) (*ResponseUserProfile, error)
 	EditUserProfile(ctx context.Context, in *RequestEditUserProfile, opts ...grpc.CallOption) (*ResponseErrorMessage, error)
+	GetFollowersDetails(ctx context.Context, in *RequestUserId, opts ...grpc.CallOption) (*ResponseGetUsersDetails, error)
+	GetFollowingsDetails(ctx context.Context, in *RequestUserId, opts ...grpc.CallOption) (*ResponseGetUsersDetails, error)
 }
 
 type authServiceClient struct {
@@ -104,7 +106,7 @@ func (c *authServiceClient) AccessRegenerator(ctx context.Context, in *RequestAc
 	return out, nil
 }
 
-func (c *authServiceClient) GetUserProfile(ctx context.Context, in *RequestUserId, opts ...grpc.CallOption) (*ResponseUserProfile, error) {
+func (c *authServiceClient) GetUserProfile(ctx context.Context, in *RequestGetUserProfile, opts ...grpc.CallOption) (*ResponseUserProfile, error) {
 	out := new(ResponseUserProfile)
 	err := c.cc.Invoke(ctx, "/auth_proto.AuthService/GetUserProfile", in, out, opts...)
 	if err != nil {
@@ -122,6 +124,24 @@ func (c *authServiceClient) EditUserProfile(ctx context.Context, in *RequestEdit
 	return out, nil
 }
 
+func (c *authServiceClient) GetFollowersDetails(ctx context.Context, in *RequestUserId, opts ...grpc.CallOption) (*ResponseGetUsersDetails, error) {
+	out := new(ResponseGetUsersDetails)
+	err := c.cc.Invoke(ctx, "/auth_proto.AuthService/GetFollowersDetails", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) GetFollowingsDetails(ctx context.Context, in *RequestUserId, opts ...grpc.CallOption) (*ResponseGetUsersDetails, error) {
+	out := new(ResponseGetUsersDetails)
+	err := c.cc.Invoke(ctx, "/auth_proto.AuthService/GetFollowingsDetails", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -133,8 +153,10 @@ type AuthServiceServer interface {
 	ResetPassword(context.Context, *RequestResetPass) (*ResponseErrorMessage, error)
 	VerifyAccessToken(context.Context, *RequestVerifyAccess) (*ResponseVerifyAccess, error)
 	AccessRegenerator(context.Context, *RequestAccessGenerator) (*ResponseAccessGenerator, error)
-	GetUserProfile(context.Context, *RequestUserId) (*ResponseUserProfile, error)
+	GetUserProfile(context.Context, *RequestGetUserProfile) (*ResponseUserProfile, error)
 	EditUserProfile(context.Context, *RequestEditUserProfile) (*ResponseErrorMessage, error)
+	GetFollowersDetails(context.Context, *RequestUserId) (*ResponseGetUsersDetails, error)
+	GetFollowingsDetails(context.Context, *RequestUserId) (*ResponseGetUsersDetails, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -163,11 +185,17 @@ func (UnimplementedAuthServiceServer) VerifyAccessToken(context.Context, *Reques
 func (UnimplementedAuthServiceServer) AccessRegenerator(context.Context, *RequestAccessGenerator) (*ResponseAccessGenerator, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AccessRegenerator not implemented")
 }
-func (UnimplementedAuthServiceServer) GetUserProfile(context.Context, *RequestUserId) (*ResponseUserProfile, error) {
+func (UnimplementedAuthServiceServer) GetUserProfile(context.Context, *RequestGetUserProfile) (*ResponseUserProfile, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserProfile not implemented")
 }
 func (UnimplementedAuthServiceServer) EditUserProfile(context.Context, *RequestEditUserProfile) (*ResponseErrorMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditUserProfile not implemented")
+}
+func (UnimplementedAuthServiceServer) GetFollowersDetails(context.Context, *RequestUserId) (*ResponseGetUsersDetails, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFollowersDetails not implemented")
+}
+func (UnimplementedAuthServiceServer) GetFollowingsDetails(context.Context, *RequestUserId) (*ResponseGetUsersDetails, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFollowingsDetails not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -309,7 +337,7 @@ func _AuthService_AccessRegenerator_Handler(srv interface{}, ctx context.Context
 }
 
 func _AuthService_GetUserProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestUserId)
+	in := new(RequestGetUserProfile)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -321,7 +349,7 @@ func _AuthService_GetUserProfile_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/auth_proto.AuthService/GetUserProfile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).GetUserProfile(ctx, req.(*RequestUserId))
+		return srv.(AuthServiceServer).GetUserProfile(ctx, req.(*RequestGetUserProfile))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -340,6 +368,42 @@ func _AuthService_EditUserProfile_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).EditUserProfile(ctx, req.(*RequestEditUserProfile))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_GetFollowersDetails_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestUserId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).GetFollowersDetails(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/auth_proto.AuthService/GetFollowersDetails",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).GetFollowersDetails(ctx, req.(*RequestUserId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_GetFollowingsDetails_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestUserId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).GetFollowingsDetails(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/auth_proto.AuthService/GetFollowingsDetails",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).GetFollowingsDetails(ctx, req.(*RequestUserId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -386,6 +450,14 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EditUserProfile",
 			Handler:    _AuthService_EditUserProfile_Handler,
+		},
+		{
+			MethodName: "GetFollowersDetails",
+			Handler:    _AuthService_GetFollowersDetails_Handler,
+		},
+		{
+			MethodName: "GetFollowingsDetails",
+			Handler:    _AuthService_GetFollowingsDetails_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
