@@ -18,9 +18,9 @@ func InitPostNrelClient(app *fiber.App, config *config_apigw.Config, middleware 
 
 	postHandler := handler_postnrel_apigw.NewPostHandler(client)
 	relationHandler := handler_postnrel_apigw.NewRelationHandler(client)
+	commentHandler := handler_postnrel_apigw.NewCommentHandler(client)
 
-
-	router_postnrel_apigw.PostNrelUserRoutes(app, postHandler, middleware,relationHandler)
+	router_postnrel_apigw.PostNrelUserRoutes(app, postHandler, middleware, relationHandler,commentHandler)
 
 	return nil
 }

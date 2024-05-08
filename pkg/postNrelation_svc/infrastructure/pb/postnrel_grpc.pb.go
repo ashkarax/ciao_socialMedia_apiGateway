@@ -28,6 +28,14 @@ type PostNrelServiceClient interface {
 	EditPost(ctx context.Context, in *RequestEditPost, opts ...grpc.CallOption) (*ResponseErrorMessageOnly, error)
 	Follow(ctx context.Context, in *RequestFollowUnFollow, opts ...grpc.CallOption) (*ResponseErrorMessageOnly, error)
 	UnFollow(ctx context.Context, in *RequestFollowUnFollow, opts ...grpc.CallOption) (*ResponseErrorMessageOnly, error)
+	LikePost(ctx context.Context, in *RequestLikeUnlikePost, opts ...grpc.CallOption) (*ResponseErrorMessageOnly, error)
+	UnLikePost(ctx context.Context, in *RequestLikeUnlikePost, opts ...grpc.CallOption) (*ResponseErrorMessageOnly, error)
+	AddComment(ctx context.Context, in *RequestAddComment, opts ...grpc.CallOption) (*ResponseErrorMessageOnly, error)
+	DeleteComment(ctx context.Context, in *RequestCommentDelete, opts ...grpc.CallOption) (*ResponseErrorMessageOnly, error)
+	EditComment(ctx context.Context, in *RequestEditComment, opts ...grpc.CallOption) (*ResponseErrorMessageOnly, error)
+	FetchPostComments(ctx context.Context, in *RequestFetchComments, opts ...grpc.CallOption) (*ResponseFetchComments, error)
+	GetMostLovedPostsFromGlobalUser(ctx context.Context, in *RequestGetAllPosts, opts ...grpc.CallOption) (*ResponseUserPosts, error)
+	GetAllRelatedPostsForHomeScreen(ctx context.Context, in *RequestGetAllPosts, opts ...grpc.CallOption) (*ResponseUserPosts, error)
 }
 
 type postNrelServiceClient struct {
@@ -92,6 +100,78 @@ func (c *postNrelServiceClient) UnFollow(ctx context.Context, in *RequestFollowU
 	return out, nil
 }
 
+func (c *postNrelServiceClient) LikePost(ctx context.Context, in *RequestLikeUnlikePost, opts ...grpc.CallOption) (*ResponseErrorMessageOnly, error) {
+	out := new(ResponseErrorMessageOnly)
+	err := c.cc.Invoke(ctx, "/postnrel_proto.PostNrelService/LikePost", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postNrelServiceClient) UnLikePost(ctx context.Context, in *RequestLikeUnlikePost, opts ...grpc.CallOption) (*ResponseErrorMessageOnly, error) {
+	out := new(ResponseErrorMessageOnly)
+	err := c.cc.Invoke(ctx, "/postnrel_proto.PostNrelService/UnLikePost", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postNrelServiceClient) AddComment(ctx context.Context, in *RequestAddComment, opts ...grpc.CallOption) (*ResponseErrorMessageOnly, error) {
+	out := new(ResponseErrorMessageOnly)
+	err := c.cc.Invoke(ctx, "/postnrel_proto.PostNrelService/AddComment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postNrelServiceClient) DeleteComment(ctx context.Context, in *RequestCommentDelete, opts ...grpc.CallOption) (*ResponseErrorMessageOnly, error) {
+	out := new(ResponseErrorMessageOnly)
+	err := c.cc.Invoke(ctx, "/postnrel_proto.PostNrelService/DeleteComment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postNrelServiceClient) EditComment(ctx context.Context, in *RequestEditComment, opts ...grpc.CallOption) (*ResponseErrorMessageOnly, error) {
+	out := new(ResponseErrorMessageOnly)
+	err := c.cc.Invoke(ctx, "/postnrel_proto.PostNrelService/EditComment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postNrelServiceClient) FetchPostComments(ctx context.Context, in *RequestFetchComments, opts ...grpc.CallOption) (*ResponseFetchComments, error) {
+	out := new(ResponseFetchComments)
+	err := c.cc.Invoke(ctx, "/postnrel_proto.PostNrelService/FetchPostComments", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postNrelServiceClient) GetMostLovedPostsFromGlobalUser(ctx context.Context, in *RequestGetAllPosts, opts ...grpc.CallOption) (*ResponseUserPosts, error) {
+	out := new(ResponseUserPosts)
+	err := c.cc.Invoke(ctx, "/postnrel_proto.PostNrelService/GetMostLovedPostsFromGlobalUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postNrelServiceClient) GetAllRelatedPostsForHomeScreen(ctx context.Context, in *RequestGetAllPosts, opts ...grpc.CallOption) (*ResponseUserPosts, error) {
+	out := new(ResponseUserPosts)
+	err := c.cc.Invoke(ctx, "/postnrel_proto.PostNrelService/GetAllRelatedPostsForHomeScreen", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PostNrelServiceServer is the server API for PostNrelService service.
 // All implementations must embed UnimplementedPostNrelServiceServer
 // for forward compatibility
@@ -102,6 +182,14 @@ type PostNrelServiceServer interface {
 	EditPost(context.Context, *RequestEditPost) (*ResponseErrorMessageOnly, error)
 	Follow(context.Context, *RequestFollowUnFollow) (*ResponseErrorMessageOnly, error)
 	UnFollow(context.Context, *RequestFollowUnFollow) (*ResponseErrorMessageOnly, error)
+	LikePost(context.Context, *RequestLikeUnlikePost) (*ResponseErrorMessageOnly, error)
+	UnLikePost(context.Context, *RequestLikeUnlikePost) (*ResponseErrorMessageOnly, error)
+	AddComment(context.Context, *RequestAddComment) (*ResponseErrorMessageOnly, error)
+	DeleteComment(context.Context, *RequestCommentDelete) (*ResponseErrorMessageOnly, error)
+	EditComment(context.Context, *RequestEditComment) (*ResponseErrorMessageOnly, error)
+	FetchPostComments(context.Context, *RequestFetchComments) (*ResponseFetchComments, error)
+	GetMostLovedPostsFromGlobalUser(context.Context, *RequestGetAllPosts) (*ResponseUserPosts, error)
+	GetAllRelatedPostsForHomeScreen(context.Context, *RequestGetAllPosts) (*ResponseUserPosts, error)
 	mustEmbedUnimplementedPostNrelServiceServer()
 }
 
@@ -126,6 +214,30 @@ func (UnimplementedPostNrelServiceServer) Follow(context.Context, *RequestFollow
 }
 func (UnimplementedPostNrelServiceServer) UnFollow(context.Context, *RequestFollowUnFollow) (*ResponseErrorMessageOnly, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnFollow not implemented")
+}
+func (UnimplementedPostNrelServiceServer) LikePost(context.Context, *RequestLikeUnlikePost) (*ResponseErrorMessageOnly, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LikePost not implemented")
+}
+func (UnimplementedPostNrelServiceServer) UnLikePost(context.Context, *RequestLikeUnlikePost) (*ResponseErrorMessageOnly, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnLikePost not implemented")
+}
+func (UnimplementedPostNrelServiceServer) AddComment(context.Context, *RequestAddComment) (*ResponseErrorMessageOnly, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddComment not implemented")
+}
+func (UnimplementedPostNrelServiceServer) DeleteComment(context.Context, *RequestCommentDelete) (*ResponseErrorMessageOnly, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteComment not implemented")
+}
+func (UnimplementedPostNrelServiceServer) EditComment(context.Context, *RequestEditComment) (*ResponseErrorMessageOnly, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditComment not implemented")
+}
+func (UnimplementedPostNrelServiceServer) FetchPostComments(context.Context, *RequestFetchComments) (*ResponseFetchComments, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FetchPostComments not implemented")
+}
+func (UnimplementedPostNrelServiceServer) GetMostLovedPostsFromGlobalUser(context.Context, *RequestGetAllPosts) (*ResponseUserPosts, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMostLovedPostsFromGlobalUser not implemented")
+}
+func (UnimplementedPostNrelServiceServer) GetAllRelatedPostsForHomeScreen(context.Context, *RequestGetAllPosts) (*ResponseUserPosts, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllRelatedPostsForHomeScreen not implemented")
 }
 func (UnimplementedPostNrelServiceServer) mustEmbedUnimplementedPostNrelServiceServer() {}
 
@@ -248,6 +360,150 @@ func _PostNrelService_UnFollow_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PostNrelService_LikePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestLikeUnlikePost)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostNrelServiceServer).LikePost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/postnrel_proto.PostNrelService/LikePost",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostNrelServiceServer).LikePost(ctx, req.(*RequestLikeUnlikePost))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostNrelService_UnLikePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestLikeUnlikePost)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostNrelServiceServer).UnLikePost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/postnrel_proto.PostNrelService/UnLikePost",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostNrelServiceServer).UnLikePost(ctx, req.(*RequestLikeUnlikePost))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostNrelService_AddComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestAddComment)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostNrelServiceServer).AddComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/postnrel_proto.PostNrelService/AddComment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostNrelServiceServer).AddComment(ctx, req.(*RequestAddComment))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostNrelService_DeleteComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestCommentDelete)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostNrelServiceServer).DeleteComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/postnrel_proto.PostNrelService/DeleteComment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostNrelServiceServer).DeleteComment(ctx, req.(*RequestCommentDelete))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostNrelService_EditComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestEditComment)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostNrelServiceServer).EditComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/postnrel_proto.PostNrelService/EditComment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostNrelServiceServer).EditComment(ctx, req.(*RequestEditComment))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostNrelService_FetchPostComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestFetchComments)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostNrelServiceServer).FetchPostComments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/postnrel_proto.PostNrelService/FetchPostComments",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostNrelServiceServer).FetchPostComments(ctx, req.(*RequestFetchComments))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostNrelService_GetMostLovedPostsFromGlobalUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestGetAllPosts)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostNrelServiceServer).GetMostLovedPostsFromGlobalUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/postnrel_proto.PostNrelService/GetMostLovedPostsFromGlobalUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostNrelServiceServer).GetMostLovedPostsFromGlobalUser(ctx, req.(*RequestGetAllPosts))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostNrelService_GetAllRelatedPostsForHomeScreen_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestGetAllPosts)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostNrelServiceServer).GetAllRelatedPostsForHomeScreen(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/postnrel_proto.PostNrelService/GetAllRelatedPostsForHomeScreen",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostNrelServiceServer).GetAllRelatedPostsForHomeScreen(ctx, req.(*RequestGetAllPosts))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PostNrelService_ServiceDesc is the grpc.ServiceDesc for PostNrelService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -278,6 +534,38 @@ var PostNrelService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UnFollow",
 			Handler:    _PostNrelService_UnFollow_Handler,
+		},
+		{
+			MethodName: "LikePost",
+			Handler:    _PostNrelService_LikePost_Handler,
+		},
+		{
+			MethodName: "UnLikePost",
+			Handler:    _PostNrelService_UnLikePost_Handler,
+		},
+		{
+			MethodName: "AddComment",
+			Handler:    _PostNrelService_AddComment_Handler,
+		},
+		{
+			MethodName: "DeleteComment",
+			Handler:    _PostNrelService_DeleteComment_Handler,
+		},
+		{
+			MethodName: "EditComment",
+			Handler:    _PostNrelService_EditComment_Handler,
+		},
+		{
+			MethodName: "FetchPostComments",
+			Handler:    _PostNrelService_FetchPostComments_Handler,
+		},
+		{
+			MethodName: "GetMostLovedPostsFromGlobalUser",
+			Handler:    _PostNrelService_GetMostLovedPostsFromGlobalUser_Handler,
+		},
+		{
+			MethodName: "GetAllRelatedPostsForHomeScreen",
+			Handler:    _PostNrelService_GetAllRelatedPostsForHomeScreen_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

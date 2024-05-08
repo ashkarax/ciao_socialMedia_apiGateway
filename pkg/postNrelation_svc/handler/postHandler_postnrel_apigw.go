@@ -336,3 +336,193 @@ func (svc *PostHandler) EditPost(ctx *fiber.Ctx) error {
 		})
 
 }
+
+func (svc *PostHandler) LikePost(ctx *fiber.Ctx) error {
+	userId := ctx.Locals("userId")
+	postId := ctx.Params("postid")
+
+	if fmt.Sprint(userId) == "" || postId == "" {
+		return ctx.Status(fiber.ErrBadRequest.Code).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.ErrBadRequest.Code,
+				Message:    "can't like post",
+				Data:       nil,
+				Error:      "no postid found in request",
+			})
+	}
+
+	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	resp, err := svc.Client.LikePost(context, &pb.RequestLikeUnlikePost{
+		UserId: fmt.Sprint(userId),
+		PostId: postId,
+	})
+
+	if err != nil {
+		fmt.Println("----------postNrel service down--------")
+
+		return ctx.Status(fiber.StatusServiceUnavailable).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusServiceUnavailable,
+				Message:    "can't like Post",
+				Error:      err.Error(),
+			})
+	}
+
+	if resp.ErrorMessage != "" {
+		return ctx.Status(fiber.StatusBadRequest).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusBadRequest,
+				Message:    "can't like Post",
+				Data:       resp,
+				Error:      resp.ErrorMessage,
+			})
+	}
+
+	return ctx.Status(fiber.StatusOK).
+		JSON(responsemodels_postnrel_apigw.CommonResponse{
+			StatusCode: fiber.StatusOK,
+			Message:    "Post liked succesfully",
+		})
+
+}
+
+func (svc *PostHandler) UnLikePost(ctx *fiber.Ctx) error {
+	userId := ctx.Locals("userId")
+	postId := ctx.Params("postid")
+
+	if fmt.Sprint(userId) == "" || postId == "" {
+		return ctx.Status(fiber.ErrBadRequest.Code).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.ErrBadRequest.Code,
+				Message:    "can't like post",
+				Data:       nil,
+				Error:      "no postid found in request",
+			})
+	}
+
+	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	resp, err := svc.Client.UnLikePost(context, &pb.RequestLikeUnlikePost{
+		UserId: fmt.Sprint(userId),
+		PostId: postId,
+	})
+
+	if err != nil {
+		fmt.Println("----------postNrel service down--------")
+
+		return ctx.Status(fiber.StatusServiceUnavailable).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusServiceUnavailable,
+				Message:    "can't unlike Post",
+				Error:      err.Error(),
+			})
+	}
+
+	if resp.ErrorMessage != "" {
+		return ctx.Status(fiber.StatusBadRequest).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusBadRequest,
+				Message:    "can't unlike Post",
+				Data:       resp,
+				Error:      resp.ErrorMessage,
+			})
+	}
+
+	return ctx.Status(fiber.StatusOK).
+		JSON(responsemodels_postnrel_apigw.CommonResponse{
+			StatusCode: fiber.StatusOK,
+			Message:    "Post unliked succesfully",
+		})
+
+}
+
+func (svc *PostHandler) GetMostLovedPostsFromGlobalUser(ctx *fiber.Ctx) error {
+
+	userId := ctx.Locals("userId")
+	limit, offset := ctx.Query("limit", "22"), ctx.Query("offset", "0")
+
+	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	resp, err := svc.Client.GetMostLovedPostsFromGlobalUser(context, &pb.RequestGetAllPosts{
+		UserId: fmt.Sprint(userId),
+		Limit:  limit,
+		OffSet: offset,
+	})
+
+	if err != nil {
+		fmt.Println("----------postNrel service down--------")
+
+		return ctx.Status(fiber.StatusServiceUnavailable).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusServiceUnavailable,
+				Message:    "can't fetch Posts",
+				Error:      err.Error(),
+			})
+	}
+
+	if resp.ErrorMessage != "" {
+		return ctx.Status(fiber.StatusBadRequest).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusBadRequest,
+				Message:    "can't fetch Posts",
+				Data:       resp,
+				Error:      resp.ErrorMessage,
+			})
+	}
+
+	return ctx.Status(fiber.StatusOK).
+		JSON(responsemodels_postnrel_apigw.CommonResponse{
+			StatusCode: fiber.StatusOK,
+			Message:    "Posts fetched succesfully",
+			Data:       resp,
+			Error:      nil,
+		})
+}
+
+func (svc *PostHandler) GetAllRelatedPostsForHomeScreen(ctx *fiber.Ctx) error {
+
+	userId := ctx.Locals("userId")
+	limit, offset := ctx.Query("limit", "22"), ctx.Query("offset", "0")
+
+	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	resp, err := svc.Client.GetAllRelatedPostsForHomeScreen(context, &pb.RequestGetAllPosts{
+		UserId: fmt.Sprint(userId),
+		Limit:  limit,
+		OffSet: offset,
+	})
+
+	if err != nil {
+		fmt.Println("----------postNrel service down--------")
+
+		return ctx.Status(fiber.StatusServiceUnavailable).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusServiceUnavailable,
+				Message:    "can't fetch Posts",
+				Error:      err.Error(),
+			})
+	}
+
+	if resp.ErrorMessage != "" {
+		return ctx.Status(fiber.StatusBadRequest).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusBadRequest,
+				Message:    "can't fetch Posts",
+				Data:       resp,
+				Error:      resp.ErrorMessage,
+			})
+	}
+
+	return ctx.Status(fiber.StatusOK).
+		JSON(responsemodels_postnrel_apigw.CommonResponse{
+			StatusCode: fiber.StatusOK,
+			Message:    "Posts fetched succesfully",
+			Data:       resp,
+			Error:      nil,
+		})
+}

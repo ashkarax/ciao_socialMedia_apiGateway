@@ -9,7 +9,8 @@ import (
 func PostNrelUserRoutes(app *fiber.App,
 	postHandler *handler_postnrel_apigw.PostHandler,
 	middleware *middleware_auth_apigw.Middleware,
-	relationHandler *handler_postnrel_apigw.RelationHandler) {
+	relationHandler *handler_postnrel_apigw.RelationHandler,
+	commentHandler *handler_postnrel_apigw.CommentHandler) {
 
 	app.Use(middleware.UserAuthorizationMiddleware)
 	{
@@ -20,11 +21,32 @@ func PostNrelUserRoutes(app *fiber.App,
 			postManagement.Delete("/:postid", postHandler.DeletePost)
 			postManagement.Patch("/", postHandler.EditPost)
 
+			postManagement.Get("/userrelatedposts", postHandler.GetAllRelatedPostsForHomeScreen)
+
+
+			likemanagement := postManagement.Group("/like")
+			{
+				likemanagement.Post("/:postid", postHandler.LikePost)
+				likemanagement.Delete("/:postid", postHandler.UnLikePost)
+			}
+			commentManagement := postManagement.Group("/comment")
+			{
+				commentManagement.Get("/:postid", commentHandler.FetchPostComments)
+				commentManagement.Post("/", commentHandler.AddComment)
+				commentManagement.Delete("/:commentid", commentHandler.DeleteComment)
+				commentManagement.Patch("/", commentHandler.EditComment)
+			}
+
 		}
 		followRelationshipManagement := app.Group("/relation")
 		{
 			followRelationshipManagement.Post("/follow/:followingid", relationHandler.Follow)
 			followRelationshipManagement.Delete("/unfollow/:unfollowingid", relationHandler.UnFollow)
+
+		}
+		exploremanagement := app.Group("/explore")
+		{
+			exploremanagement.Get("/", postHandler.GetMostLovedPostsFromGlobalUser)
 
 		}
 

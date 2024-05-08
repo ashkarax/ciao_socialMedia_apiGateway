@@ -404,16 +404,12 @@ func (svc *UserHandler) ResetPassword(ctx *fiber.Ctx) error {
 
 func (svc *UserHandler) GetUserProfile(ctx *fiber.Ctx) error {
 	userId := ctx.Locals("userId")
-	UserId := fmt.Sprint(userId)
-
-	userBId := ctx.Query("userbid")
 
 	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
 	resp, err := svc.Client.GetUserProfile(context, &pb.RequestGetUserProfile{
-		UserId:  UserId,
-		UserBId: userBId,
+		UserId: fmt.Sprint(userId),
 	})
 
 	if err != nil {
@@ -437,7 +433,7 @@ func (svc *UserHandler) GetUserProfile(ctx *fiber.Ctx) error {
 			})
 	}
 
-	var respStruct responsemodels_auth_apigw.UserProfile //used to show the zero count of posts,following,followers etc
+	var respStruct responsemodels_auth_apigw.UserProfileA //used to show the zero count of posts,following,followers etc
 
 	respStruct.Name = resp.Name
 	respStruct.UserName = resp.UserName
@@ -613,6 +609,73 @@ func (svc *UserHandler) GetFollowingsDetails(ctx *fiber.Ctx) error {
 			StatusCode: fiber.StatusOK,
 			Message:    "fetched followings details successfully",
 			Data:       resp,
+			Error:      nil,
+		})
+
+}
+
+func (svc *UserHandler) GetAnotherUserProfile(ctx *fiber.Ctx) error {
+	userId := ctx.Locals("userId")
+	UserId := fmt.Sprint(userId)
+
+	userBId := ctx.Params("userbid")
+
+	if fmt.Sprint(userId) == "" || userBId == "" {
+		return ctx.Status(fiber.ErrBadRequest.Code).
+			JSON(responsemodels_auth_apigw.CommonResponse{
+				StatusCode: fiber.ErrBadRequest.Code,
+				Message:    "can't fetch user profile",
+				Data:       nil,
+				Error:      "no userbid found in request",
+			})
+	}
+
+	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	resp, err := svc.Client.GetUserProfile(context, &pb.RequestGetUserProfile{
+		UserId:  UserId,
+		UserBId: userBId,
+	})
+
+	if err != nil {
+		fmt.Println("----------auth service down--------")
+
+		return ctx.Status(fiber.StatusServiceUnavailable).
+			JSON(responsemodels_auth_apigw.CommonResponse{
+				StatusCode: fiber.StatusServiceUnavailable,
+				Message:    "failed to get user profile",
+				Error:      err.Error(),
+			})
+	}
+
+	if resp.ErrorMessage != "" {
+		return ctx.Status(fiber.StatusBadRequest).
+			JSON(responsemodels_auth_apigw.CommonResponse{
+				StatusCode: fiber.StatusBadRequest,
+				Message:    "failed to get user profile",
+				Data:       resp,
+				Error:      resp.ErrorMessage,
+			})
+	}
+
+	var respStruct responsemodels_auth_apigw.UserProfileB //used to show the zero count of posts,following,followers etc
+
+	respStruct.Name = resp.Name
+	respStruct.UserName = resp.UserName
+	respStruct.Bio = resp.Bio
+	respStruct.Links = resp.Links
+	respStruct.UserProfileImgURL = resp.ProfileImageURL
+	respStruct.PostsCount = uint(resp.PostsCount)
+	respStruct.FollowersCount = uint(resp.FollowerCount)
+	respStruct.FollowingCount = uint(resp.FollowingCount)
+	respStruct.FollowingStatus = resp.FollowingStat
+
+	return ctx.Status(fiber.StatusOK).
+		JSON(responsemodels_auth_apigw.CommonResponse{
+			StatusCode: fiber.StatusOK,
+			Message:    "fetched user profile successfully",
+			Data:       respStruct,
 			Error:      nil,
 		})
 

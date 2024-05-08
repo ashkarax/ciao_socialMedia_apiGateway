@@ -12,3 +12,18 @@ type EditPostResp struct {
 	PostId  string `json:"postid"`
 	UserId  string `json:"userid" `
 }
+
+// type PostData struct {
+// 	UserId            uint   `json:"UserId"`
+// 	UserName          string `json:"UserName"`
+// 	UserProfileImgURL string `json:"UserProfileImgURL"`
+
+// 	PostId  uint   `json:"PostId"`
+// 	Caption string `json:"Caption"`
+
+// 	PostAge       string   `json:"PostAge"`
+// 	MediaUrl      []string `json:"MediaUrl"`
+// 	LikeStatus    bool     `json:"LikeStatus" `
+// 	LikesCount    string   `json:"LikesCount"`
+// 	CommentsCount string   `json:"CommentsCount"`
+// }

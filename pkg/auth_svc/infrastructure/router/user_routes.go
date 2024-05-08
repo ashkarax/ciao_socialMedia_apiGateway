@@ -25,6 +25,17 @@ func AuthUserRoutes(app *fiber.App, userHandler *handler_auth_apigw.UserHandler,
 			profileManagement.Get("/following", userHandler.GetFollowingsDetails)
 		}
 
+		exploremanagement := app.Group("/explore")
+		{
+			exploremanagement.Get("/profile/:userbid", userHandler.GetAnotherUserProfile)
+
+			// searchmanagement := exploremanagement.Group("/search")
+			// {
+			// 	searchmanagement.Get("/user/:searchtext", userHandler.SearchUser)
+
+			// }
+		}
+
 	}
 
 }
