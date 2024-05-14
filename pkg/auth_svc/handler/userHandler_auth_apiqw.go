@@ -3,11 +3,15 @@ package handler_auth_apigw
 import (
 	"context"
 	"fmt"
+	"log"
+	"regexp"
 	"time"
 
 	requestmodels_auth_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/auth_svc/infrastructure/models/request_models"
 	responsemodels_auth_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/auth_svc/infrastructure/models/response_models"
 	"github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/auth_svc/infrastructure/pb"
+	byteconverter_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/utils/byte_converter"
+	mediafileformatchecker_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/utils/mediaFileFormatChecker"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
@@ -676,6 +680,158 @@ func (svc *UserHandler) GetAnotherUserProfile(ctx *fiber.Ctx) error {
 			StatusCode: fiber.StatusOK,
 			Message:    "fetched user profile successfully",
 			Data:       respStruct,
+			Error:      nil,
+		})
+
+}
+
+func (svc *UserHandler) SearchUser(ctx *fiber.Ctx) error {
+	userId := ctx.Locals("userId")
+
+	searchText := ctx.Params("searchtext")
+	limit, offset := ctx.Query("limit", "5"), ctx.Query("offset", "0")
+
+	if searchText == "" {
+		return ctx.Status(fiber.StatusServiceUnavailable).
+			JSON(responsemodels_auth_apigw.CommonResponse{
+				StatusCode: fiber.StatusBadRequest,
+				Message:    "failed to get search result",
+				Error:      "enter a valid name or username",
+			})
+	}
+
+	validSearch := regexp.MustCompile(`^[a-zA-Z0-9_ ]+$`).MatchString
+	if len(searchText) > 12 || !validSearch(searchText) {
+		return ctx.Status(fiber.StatusServiceUnavailable).
+			JSON(responsemodels_auth_apigw.CommonResponse{
+				StatusCode: fiber.StatusBadRequest,
+				Message:    "failed to get search result",
+				Error:      "searchtext should contain only less than 12 letters and search input can only contain letters, numbers, spaces, or underscores",
+			})
+	}
+
+	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	resp, err := svc.Client.SearchUser(context, &pb.RequestUserSearch{
+		UserId:     fmt.Sprint(userId),
+		SearchText: searchText,
+		Limit:      limit,
+		Offset:     offset,
+	})
+
+	if err != nil {
+		fmt.Println("----------auth service down--------")
+
+		return ctx.Status(fiber.StatusServiceUnavailable).
+			JSON(responsemodels_auth_apigw.CommonResponse{
+				StatusCode: fiber.StatusServiceUnavailable,
+				Message:    "failed to get search result",
+				Error:      err.Error(),
+			})
+	}
+
+	if resp.ErrorMessage != "" {
+		return ctx.Status(fiber.StatusBadRequest).
+			JSON(responsemodels_auth_apigw.CommonResponse{
+				StatusCode: fiber.StatusBadRequest,
+				Message:    "failed to get search result",
+				Error:      resp.ErrorMessage,
+			})
+	}
+	return ctx.Status(fiber.StatusOK).
+		JSON(responsemodels_auth_apigw.CommonResponse{
+			StatusCode: fiber.StatusOK,
+			Message:    "fetched search result successfully",
+			Data:       resp,
+			Error:      nil,
+		})
+}
+
+func (svc *UserHandler) SetProfileImage(ctx *fiber.Ctx) error {
+	userId := ctx.Locals("userId")
+
+	//fiber's ctx.BodyParser can't parse files(*multipart.FileHeader),
+	//so we have to manually access the Multipart form and read the files form it.
+	form, err := ctx.MultipartForm()
+	if err != nil {
+		return err
+	}
+	img := form.File["ProfileImg"]
+	if len(img) == 0 || len(img) > 1 {
+
+		return ctx.Status(fiber.ErrBadRequest.Code).
+			JSON(responsemodels_auth_apigw.CommonResponse{
+				StatusCode: fiber.ErrBadRequest.Code,
+				Message:    "can't add profile image",
+				Error:      "no ProfileImg found in request,you should exactly upload only one img",
+			})
+
+	}
+	ProfileImg := img[0]
+
+	if ProfileImg.Size > 2*1024*1024 { // 2 MB limit
+		return ctx.Status(fiber.ErrBadRequest.Code).
+			JSON(responsemodels_auth_apigw.CommonResponse{
+				StatusCode: fiber.ErrBadRequest.Code,
+				Message:    "can't add profile image",
+				Error:      "ProfileImg size exceeds the limit (2MB)",
+			})
+	}
+
+	file, err := ProfileImg.Open()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	contentType, err := mediafileformatchecker_apigw.ProfileImageFileFormatChecker(file)
+	if err != nil {
+		return ctx.Status(fiber.ErrBadRequest.Code).
+			JSON(responsemodels_auth_apigw.CommonResponse{
+				StatusCode: fiber.ErrBadRequest.Code,
+				Message:    "can't add profile image",
+				Error:      err.Error(),
+			})
+	}
+
+	content, err := byteconverter_apigw.MultipartFileheaderToBytes(&file)
+	if err != nil {
+		fmt.Println("-------------byteconverter-down---------")
+	}
+
+	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	resp, err := svc.Client.SetUserProfileImage(context, &pb.RequestSetProfileImg{
+		UserId:      fmt.Sprint(userId),
+		ContentType: *contentType,
+		Img:         content,
+	})
+
+	if err != nil {
+		fmt.Println("----------auth service down--------")
+
+		return ctx.Status(fiber.StatusServiceUnavailable).
+			JSON(responsemodels_auth_apigw.CommonResponse{
+				StatusCode: fiber.StatusServiceUnavailable,
+				Message:    "can't add profile image",
+				Error:      err.Error(),
+			})
+	}
+
+	if resp.ErrorMessage != "" {
+		return ctx.Status(fiber.StatusBadRequest).
+			JSON(responsemodels_auth_apigw.CommonResponse{
+				StatusCode: fiber.StatusBadRequest,
+				Message:    "can't add profile image",
+				Error:      resp.ErrorMessage,
+			})
+	}
+	return ctx.Status(fiber.StatusOK).
+		JSON(responsemodels_auth_apigw.CommonResponse{
+			StatusCode: fiber.StatusOK,
+			Message:    "profile image set successfully",
 			Error:      nil,
 		})
 

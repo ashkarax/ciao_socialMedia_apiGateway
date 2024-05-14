@@ -4,3 +4,5 @@ server:
 	go run cmd/main.go
 gofmt:
 	gofmt -w .
+build:
+	go build -o ./cmd/ciaoApiGatewayExec ./cmd/main.go

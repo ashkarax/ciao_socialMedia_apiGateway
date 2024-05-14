@@ -21,6 +21,7 @@ func AuthUserRoutes(app *fiber.App, userHandler *handler_auth_apigw.UserHandler,
 		{
 			profileManagement.Get("/", userHandler.GetUserProfile)
 			profileManagement.Patch("/edit", userHandler.EditUserProfile)
+			profileManagement.Post("/setprofileimage", userHandler.SetProfileImage)
 			profileManagement.Get("/followers", userHandler.GetFollowersDetails)
 			profileManagement.Get("/following", userHandler.GetFollowingsDetails)
 		}
@@ -29,11 +30,10 @@ func AuthUserRoutes(app *fiber.App, userHandler *handler_auth_apigw.UserHandler,
 		{
 			exploremanagement.Get("/profile/:userbid", userHandler.GetAnotherUserProfile)
 
-			// searchmanagement := exploremanagement.Group("/search")
-			// {
-			// 	searchmanagement.Get("/user/:searchtext", userHandler.SearchUser)
-
-			// }
+			searchmanagement := exploremanagement.Group("/search")
+			{
+				searchmanagement.Get("/user/:searchtext", userHandler.SearchUser)
+			}
 		}
 
 	}
