@@ -6,6 +6,7 @@ import (
 
 	di_auth_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/auth_svc/infrastructure/di"
 	responsemodels_auth_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/auth_svc/infrastructure/models/response_models"
+	di_chatNcallSvc_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/chatNcall_svc/infrastructure/di"
 	apigw_config "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/config"
 	di_postnrel_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/postNrelation_svc/infrastructure/di"
 	"github.com/gofiber/fiber/v2"
@@ -42,6 +43,11 @@ func main() {
 	}
 
 	err = di_postnrel_apigw.InitPostNrelClient(app, config, middleware)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = di_chatNcallSvc_apigw.InitChatNcallClient(app, config, middleware)
 	if err != nil {
 		log.Fatal(err)
 	}

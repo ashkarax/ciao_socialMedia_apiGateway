@@ -1,0 +1,11 @@
+version: '3.9'
+name: ciao_apigw_service
+
+services:
+  ciao_apigw:
+    image: ciao_apigw_svc:production
+    build: .
+    restart: unless-stopped
+    container_name: apigw_svc
+    ports:
+      - 3000:3000

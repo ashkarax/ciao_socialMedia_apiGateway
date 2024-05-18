@@ -7,12 +7,12 @@ RUN  go mod download
 COPY . .
 RUN go build -o ./cmd/ciaoApiGatewayExec ./cmd/main.go
 
-FROM alpine:latest
+FROM scratch
 WORKDIR /project/ciao/
 
 
 COPY --from=stage1 /project/ciao/cmd/ciaoApiGatewayExec ./cmd/
-COPY --from=stage1 /project/ciao/pkg/config/envs/dev.env ./pkg/config/envs/
+COPY --from=stage1 /project/ciao/dev.env ./
 
 EXPOSE 3000
 ENTRYPOINT [ "/project/ciao/cmd/ciaoApiGatewayExec" ]
