@@ -439,6 +439,7 @@ func (svc *UserHandler) GetUserProfile(ctx *fiber.Ctx) error {
 
 	var respStruct responsemodels_auth_apigw.UserProfileA //used to show the zero count of posts,following,followers etc
 
+	respStruct.UserId = respStruct.UserId
 	respStruct.Name = resp.Name
 	respStruct.UserName = resp.UserName
 	respStruct.Bio = resp.Bio
@@ -665,6 +666,7 @@ func (svc *UserHandler) GetAnotherUserProfile(ctx *fiber.Ctx) error {
 
 	var respStruct responsemodels_auth_apigw.UserProfileB //used to show the zero count of posts,following,followers etc
 
+	respStruct.UserId = respStruct.UserId
 	respStruct.Name = resp.Name
 	respStruct.UserName = resp.UserName
 	respStruct.Bio = resp.Bio

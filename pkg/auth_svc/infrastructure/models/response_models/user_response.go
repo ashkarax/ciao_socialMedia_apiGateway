@@ -47,7 +47,7 @@ type EditUserProfileResp struct {
 }
 
 type UserProfileA struct {
-	UserId uint `json:"userid"  gorm:"column:id"`
+	UserId uint `json:"UserId"  gorm:"column:id"`
 
 	Name              string `json:"Name"`
 	UserName          string `json:"UserName"`
@@ -60,7 +60,7 @@ type UserProfileA struct {
 	FollowingCount uint `json:"FollowingCount"`
 }
 type UserProfileB struct {
-	UserId uint `json:"userid"  gorm:"column:id"`
+	UserId uint `json:"UserId"  gorm:"column:id"`
 
 	Name              string `json:"Name"`
 	UserName          string `json:"UserName"`
