@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"strconv"
 	"time"
 
 	requestmodels_auth_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/auth_svc/infrastructure/models/request_models"
@@ -439,7 +440,10 @@ func (svc *UserHandler) GetUserProfile(ctx *fiber.Ctx) error {
 
 	var respStruct responsemodels_auth_apigw.UserProfileA //used to show the zero count of posts,following,followers etc
 
-	respStruct.UserId = respStruct.UserId
+	intValueuserId, _ := strconv.Atoi(fmt.Sprint(userId))
+	uintValueuserId := uint(intValueuserId)
+
+	respStruct.UserId = uintValueuserId
 	respStruct.Name = resp.Name
 	respStruct.UserName = resp.UserName
 	respStruct.Bio = resp.Bio
@@ -666,7 +670,10 @@ func (svc *UserHandler) GetAnotherUserProfile(ctx *fiber.Ctx) error {
 
 	var respStruct responsemodels_auth_apigw.UserProfileB //used to show the zero count of posts,following,followers etc
 
-	respStruct.UserId = respStruct.UserId
+	intValueuserBId, _ := strconv.Atoi(userBId)
+	uintValueuserBId := uint(intValueuserBId)
+
+	respStruct.UserId = uintValueuserBId
 	respStruct.Name = resp.Name
 	respStruct.UserName = resp.UserName
 	respStruct.Bio = resp.Bio
