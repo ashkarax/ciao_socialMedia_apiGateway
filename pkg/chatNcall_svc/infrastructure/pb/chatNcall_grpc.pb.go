@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ChatNCallServiceClient interface {
-	PassUserChat(ctx context.Context, in *RequestUserChat, opts ...grpc.CallOption) (*ResponseUserChat, error)
+	StoreOneToOneChatToDB(ctx context.Context, in *RequestUserChat, opts ...grpc.CallOption) (*ResponseUserChat, error)
 }
 
 type chatNCallServiceClient struct {
@@ -33,9 +33,9 @@ func NewChatNCallServiceClient(cc grpc.ClientConnInterface) ChatNCallServiceClie
 	return &chatNCallServiceClient{cc}
 }
 
-func (c *chatNCallServiceClient) PassUserChat(ctx context.Context, in *RequestUserChat, opts ...grpc.CallOption) (*ResponseUserChat, error) {
+func (c *chatNCallServiceClient) StoreOneToOneChatToDB(ctx context.Context, in *RequestUserChat, opts ...grpc.CallOption) (*ResponseUserChat, error) {
 	out := new(ResponseUserChat)
-	err := c.cc.Invoke(ctx, "/chatNcall_proto.ChatNCallService/PassUserChat", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/chatNcall_proto.ChatNCallService/StoreOneToOneChatToDB", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (c *chatNCallServiceClient) PassUserChat(ctx context.Context, in *RequestUs
 // All implementations must embed UnimplementedChatNCallServiceServer
 // for forward compatibility
 type ChatNCallServiceServer interface {
-	PassUserChat(context.Context, *RequestUserChat) (*ResponseUserChat, error)
+	StoreOneToOneChatToDB(context.Context, *RequestUserChat) (*ResponseUserChat, error)
 	mustEmbedUnimplementedChatNCallServiceServer()
 }
 
@@ -54,8 +54,8 @@ type ChatNCallServiceServer interface {
 type UnimplementedChatNCallServiceServer struct {
 }
 
-func (UnimplementedChatNCallServiceServer) PassUserChat(context.Context, *RequestUserChat) (*ResponseUserChat, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PassUserChat not implemented")
+func (UnimplementedChatNCallServiceServer) StoreOneToOneChatToDB(context.Context, *RequestUserChat) (*ResponseUserChat, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StoreOneToOneChatToDB not implemented")
 }
 func (UnimplementedChatNCallServiceServer) mustEmbedUnimplementedChatNCallServiceServer() {}
 
@@ -70,20 +70,20 @@ func RegisterChatNCallServiceServer(s grpc.ServiceRegistrar, srv ChatNCallServic
 	s.RegisterService(&ChatNCallService_ServiceDesc, srv)
 }
 
-func _ChatNCallService_PassUserChat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ChatNCallService_StoreOneToOneChatToDB_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RequestUserChat)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ChatNCallServiceServer).PassUserChat(ctx, in)
+		return srv.(ChatNCallServiceServer).StoreOneToOneChatToDB(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/chatNcall_proto.ChatNCallService/PassUserChat",
+		FullMethod: "/chatNcall_proto.ChatNCallService/StoreOneToOneChatToDB",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatNCallServiceServer).PassUserChat(ctx, req.(*RequestUserChat))
+		return srv.(ChatNCallServiceServer).StoreOneToOneChatToDB(ctx, req.(*RequestUserChat))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -96,8 +96,8 @@ var ChatNCallService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ChatNCallServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "PassUserChat",
-			Handler:    _ChatNCallService_PassUserChat_Handler,
+			MethodName: "StoreOneToOneChatToDB",
+			Handler:    _ChatNCallService_StoreOneToOneChatToDB_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

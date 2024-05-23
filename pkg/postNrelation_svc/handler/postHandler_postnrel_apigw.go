@@ -164,13 +164,15 @@ func (svc *PostHandler) AddNewPost(ctx *fiber.Ctx) error {
 
 func (svc *PostHandler) GetAllPostByUser(ctx *fiber.Ctx) error {
 	userId := ctx.Locals("userId")
+	sendingId := ctx.Query("userbid", fmt.Sprint(userId))
+
 	limit, offset := ctx.Query("limit", "12"), ctx.Query("offset", "0")
 
 	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
 	resp, err := svc.Client.GetAllPostByUser(context, &pb.RequestGetAllPosts{
-		UserId: fmt.Sprint(userId),
+		UserId: sendingId,
 		Limit:  limit,
 		OffSet: offset,
 	})

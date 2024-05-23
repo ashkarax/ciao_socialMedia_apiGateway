@@ -453,7 +453,6 @@ func (svc *UserHandler) GetUserProfile(ctx *fiber.Ctx) error {
 	respStruct.FollowersCount = uint(resp.FollowerCount)
 	respStruct.FollowingCount = uint(resp.FollowingCount)
 
-	fmt.Println("--------", resp)
 	return ctx.Status(fiber.StatusOK).
 		JSON(responsemodels_auth_apigw.CommonResponse{
 			StatusCode: fiber.StatusOK,

@@ -1,5 +1,8 @@
 syntax="proto3";
 
+import "google/protobuf/timestamp.proto";
+
+
 package chatNcall_proto;
 
 
@@ -7,13 +10,19 @@ option go_package="./pkg/chatNcall_svc/infrastructure/pb";
 
 
 service ChatNCallService{
-    rpc PassUserChat(RequestUserChat) returns (ResponseUserChat);
-   
+    rpc StoreOneToOneChatToDB(RequestUserChat) returns (ResponseUserChat);
 }
 
 
 message RequestUserChat{
+    string SenderID=1;
+    string RecieverID=2;
+    string Content=3;
+    string Status=4;
+    google.protobuf.Timestamp SentTime = 5;
 }
-message ResponseUserChat{
 
+message ResponseUserChat{
+    string messageID=1;
+    string ErrorMessage=2;
 }

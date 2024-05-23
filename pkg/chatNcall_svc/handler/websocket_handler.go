@@ -7,18 +7,27 @@ import (
 	"log"
 	"time"
 
+	"github.com/IBM/sarama"
 	requestmodels_chatNcallSvc_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/chatNcall_svc/infrastructure/models/request_models"
 	"github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/chatNcall_svc/infrastructure/pb"
+	config_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/config"
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 )
 
 type ChatWebSocHandler struct {
-	Client *pb.ChatNCallServiceClient
+	Client   pb.ChatNCallServiceClient
+	Location *time.Location
+	Config   *config_apigw.Config
 }
 
-func NewChatWebSocHandler(client *pb.ChatNCallServiceClient) *ChatWebSocHandler {
-	return &ChatWebSocHandler{Client: client}
+func NewChatWebSocHandler(client *pb.ChatNCallServiceClient, config *config_apigw.Config) *ChatWebSocHandler {
+	locationInd, _ := time.LoadLocation("Asia/Kolkata")
+	return &ChatWebSocHandler{Client: *client,
+		Location: locationInd,
+		Config:   config,
+	}
 }
 
 var UserSocketMap = make(map[string]*websocket.Conn)
@@ -52,14 +61,34 @@ func (svc *ChatWebSocHandler) WsConnection(ctx *fiber.Ctx) error {
 				break
 			}
 			messageModel.SenderID = userIdStr
+			messageModel.TimeStamp = time.Now()
 
+			validate := validator.New(validator.WithRequiredStructEnabled())
+			err = validate.Struct(messageModel)
+			if err != nil {
+				if ve, ok := err.(validator.ValidationErrors); ok {
+					for _, e := range ve {
+						switch e.Field() {
+						case "RecipientID":
+							sendErrMessageWS(userIdStr, errors.New("no RecipientID found in input"))
+						case "Type":
+							sendErrMessageWS(userIdStr, errors.New("no Type found in input"))
+						}
+					}
+				}
+				break
+			}
 			switch messageModel.Type {
 			case "OneToOne":
-				OnetoOneMessage(&messageModel)
+				svc.OnetoOneMessage(&messageModel)
 			case "OneToMany":
-				OnetoMany(&messageModel)
+				svc.OnetoMany(&messageModel)
+			case "UpdateSeenStatus":
+				svc.OnetoMany(&messageModel)
+			case "TypingStatus":
+				svc.OnetoMany(&messageModel)
 			default:
-				sendErrMessageWS(userIdStr, errors.New("message Type should be OneToOne or OneToMany,no other types allowed"))
+				sendErrMessageWS(userIdStr, errors.New("message Type should be OneToOne,OneToMany,DeleteMessage,UpdateSeenStatus or TypingStatus ,no other types allowed"))
 			}
 		}
 	})(ctx)
@@ -67,26 +96,65 @@ func (svc *ChatWebSocHandler) WsConnection(ctx *fiber.Ctx) error {
 	return nil
 }
 
-func OnetoOneMessage(msgModel *requestmodels_chatNcallSvc_apigw.MessageRequest) {
-	fmt.Println(msgModel)
-
-	msgModel.Status = "pending"
-	msgModel.Timestamp = time.Now()
-
-	conn, ok := UserSocketMap[msgModel.RecipientID]
-	if ok {
-		data := MarshalStructJson(msgModel)
-		err := conn.WriteMessage(websocket.TextMessage, data)
-		if err != nil {
-			fmt.Println("error sending to recipient", err)
-		}
-		msgModel.Status = "send"
+func (svc *ChatWebSocHandler) OnetoOneMessage(msgModel *requestmodels_chatNcallSvc_apigw.MessageRequest) {
+	if msgModel.Content == "" || len(msgModel.Content) > 100 {
+		sendErrMessageWS(msgModel.SenderID, errors.New("message content should be less than 100 words "))
+		return
 	}
 
-	fmt.Println("did not find reciever id in SocketMap")
+	var OneToOneMsgModel requestmodels_chatNcallSvc_apigw.OnetoOneMessageRequest
+
+	OneToOneMsgModel.SenderID = msgModel.SenderID
+	OneToOneMsgModel.RecipientID = msgModel.RecipientID
+	OneToOneMsgModel.Content = msgModel.Content
+	OneToOneMsgModel.TimeStamp = msgModel.TimeStamp
+	OneToOneMsgModel.Status = "pending"
+
+	conn, ok := UserSocketMap[OneToOneMsgModel.RecipientID]
+	if ok {
+		OneToOneMsgModel.TimeStamp = OneToOneMsgModel.TimeStamp.In(svc.Location)
+		data, err := MarshalStructJson(OneToOneMsgModel)
+		if err != nil {
+			sendErrMessageWS(OneToOneMsgModel.SenderID, err)
+			return
+		}
+		err = conn.WriteMessage(websocket.TextMessage, *data)
+		if err != nil {
+			fmt.Println("error sending to recipient", err)
+			return
+		}
+		OneToOneMsgModel.Status = "send"
+	}
+	fmt.Println("Adding to kafkaproducer for transporting to service and storing")
+	svc.KafkaProducerUpdateOneToOneMessage(&OneToOneMsgModel)
 }
 
-func OnetoMany(msgModel *requestmodels_chatNcallSvc_apigw.MessageRequest) {
+func (svc *ChatWebSocHandler) KafkaProducerUpdateOneToOneMessage(message *requestmodels_chatNcallSvc_apigw.OnetoOneMessageRequest) error {
+	fmt.Println("---------------form kafkaProducer:", *message)
+
+	configs := sarama.NewConfig()
+	configs.Producer.Return.Successes = true
+	configs.Producer.Retry.Max = 5
+
+	producer, err := sarama.NewSyncProducer([]string{svc.Config.KafkaPort}, configs)
+	if err != nil {
+		return err
+	}
+
+	msgJson, _ := MarshalStructJson(message)
+
+	msg := &sarama.ProducerMessage{Topic: svc.Config.KafkaTopicOneToOne,
+		Key:   sarama.StringEncoder(message.RecipientID),
+		Value: sarama.StringEncoder(*msgJson)}
+	partition, offset, err := producer.SendMessage(msg)
+	if err != nil {
+		fmt.Println("err sending message to kafkaproducer ", err)
+	}
+	log.Printf("[producer] partition id: %d; offset:%d, value: %v\n", partition, offset, msg)
+	return nil
+}
+
+func (svc *ChatWebSocHandler) OnetoMany(msgModel *requestmodels_chatNcallSvc_apigw.MessageRequest) {
 
 }
 
@@ -97,11 +165,10 @@ func sendErrMessageWS(userid string, err error) {
 	}
 }
 
-func MarshalStructJson(msgModel *requestmodels_chatNcallSvc_apigw.MessageRequest) []byte {
+func MarshalStructJson(msgModel interface{}) (*[]byte, error) {
 	data, err := json.Marshal(msgModel)
 	if err != nil {
-		sendErrMessageWS(msgModel.SenderID, err)
+		return nil, err
 	}
-
-	return data
+	return &data, nil
 }

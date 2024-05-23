@@ -17,7 +17,7 @@ func InitChatNcallClient(app *fiber.App, config *config_apigw.Config, middleware
 		return err
 	}
 
-	webSocHandler := handler_chatNcallSvc_apigw.NewChatWebSocHandler(client)
+	webSocHandler := handler_chatNcallSvc_apigw.NewChatWebSocHandler(client,config)
 
 	router_chatNcallSvc_apigw.ChatNcallRoutes(app, webSocHandler, middleware)
 
