@@ -22,7 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ChatNCallServiceClient interface {
-	StoreOneToOneChatToDB(ctx context.Context, in *RequestUserChat, opts ...grpc.CallOption) (*ResponseUserChat, error)
+	GetOneToOneChats(ctx context.Context, in *RequestUserOneToOneChat, opts ...grpc.CallOption) (*ResponseUserOneToOneChat, error)
+	GetRecentChatProfiles(ctx context.Context, in *RequestRecentChatProfiles, opts ...grpc.CallOption) (*ResponseRecentChatProfiles, error)
 }
 
 type chatNCallServiceClient struct {
@@ -33,9 +34,18 @@ func NewChatNCallServiceClient(cc grpc.ClientConnInterface) ChatNCallServiceClie
 	return &chatNCallServiceClient{cc}
 }
 
-func (c *chatNCallServiceClient) StoreOneToOneChatToDB(ctx context.Context, in *RequestUserChat, opts ...grpc.CallOption) (*ResponseUserChat, error) {
-	out := new(ResponseUserChat)
-	err := c.cc.Invoke(ctx, "/chatNcall_proto.ChatNCallService/StoreOneToOneChatToDB", in, out, opts...)
+func (c *chatNCallServiceClient) GetOneToOneChats(ctx context.Context, in *RequestUserOneToOneChat, opts ...grpc.CallOption) (*ResponseUserOneToOneChat, error) {
+	out := new(ResponseUserOneToOneChat)
+	err := c.cc.Invoke(ctx, "/chatNcall_proto.ChatNCallService/GetOneToOneChats", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *chatNCallServiceClient) GetRecentChatProfiles(ctx context.Context, in *RequestRecentChatProfiles, opts ...grpc.CallOption) (*ResponseRecentChatProfiles, error) {
+	out := new(ResponseRecentChatProfiles)
+	err := c.cc.Invoke(ctx, "/chatNcall_proto.ChatNCallService/GetRecentChatProfiles", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +56,8 @@ func (c *chatNCallServiceClient) StoreOneToOneChatToDB(ctx context.Context, in *
 // All implementations must embed UnimplementedChatNCallServiceServer
 // for forward compatibility
 type ChatNCallServiceServer interface {
-	StoreOneToOneChatToDB(context.Context, *RequestUserChat) (*ResponseUserChat, error)
+	GetOneToOneChats(context.Context, *RequestUserOneToOneChat) (*ResponseUserOneToOneChat, error)
+	GetRecentChatProfiles(context.Context, *RequestRecentChatProfiles) (*ResponseRecentChatProfiles, error)
 	mustEmbedUnimplementedChatNCallServiceServer()
 }
 
@@ -54,8 +65,11 @@ type ChatNCallServiceServer interface {
 type UnimplementedChatNCallServiceServer struct {
 }
 
-func (UnimplementedChatNCallServiceServer) StoreOneToOneChatToDB(context.Context, *RequestUserChat) (*ResponseUserChat, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method StoreOneToOneChatToDB not implemented")
+func (UnimplementedChatNCallServiceServer) GetOneToOneChats(context.Context, *RequestUserOneToOneChat) (*ResponseUserOneToOneChat, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOneToOneChats not implemented")
+}
+func (UnimplementedChatNCallServiceServer) GetRecentChatProfiles(context.Context, *RequestRecentChatProfiles) (*ResponseRecentChatProfiles, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRecentChatProfiles not implemented")
 }
 func (UnimplementedChatNCallServiceServer) mustEmbedUnimplementedChatNCallServiceServer() {}
 
@@ -70,20 +84,38 @@ func RegisterChatNCallServiceServer(s grpc.ServiceRegistrar, srv ChatNCallServic
 	s.RegisterService(&ChatNCallService_ServiceDesc, srv)
 }
 
-func _ChatNCallService_StoreOneToOneChatToDB_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestUserChat)
+func _ChatNCallService_GetOneToOneChats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestUserOneToOneChat)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ChatNCallServiceServer).StoreOneToOneChatToDB(ctx, in)
+		return srv.(ChatNCallServiceServer).GetOneToOneChats(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/chatNcall_proto.ChatNCallService/StoreOneToOneChatToDB",
+		FullMethod: "/chatNcall_proto.ChatNCallService/GetOneToOneChats",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChatNCallServiceServer).StoreOneToOneChatToDB(ctx, req.(*RequestUserChat))
+		return srv.(ChatNCallServiceServer).GetOneToOneChats(ctx, req.(*RequestUserOneToOneChat))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ChatNCallService_GetRecentChatProfiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestRecentChatProfiles)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ChatNCallServiceServer).GetRecentChatProfiles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/chatNcall_proto.ChatNCallService/GetRecentChatProfiles",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ChatNCallServiceServer).GetRecentChatProfiles(ctx, req.(*RequestRecentChatProfiles))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -96,8 +128,12 @@ var ChatNCallService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ChatNCallServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "StoreOneToOneChatToDB",
-			Handler:    _ChatNCallService_StoreOneToOneChatToDB_Handler,
+			MethodName: "GetOneToOneChats",
+			Handler:    _ChatNCallService_GetOneToOneChats_Handler,
+		},
+		{
+			MethodName: "GetRecentChatProfiles",
+			Handler:    _ChatNCallService_GetRecentChatProfiles_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

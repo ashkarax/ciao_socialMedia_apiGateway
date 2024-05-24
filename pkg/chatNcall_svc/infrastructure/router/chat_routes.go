@@ -14,11 +14,20 @@ func ChatNcallRoutes(app *fiber.App,
 
 	app.Use(middleware.UserAuthorizationMiddleware)
 	{
-		app.Use(HttptoWsConnectionUpgrader)
+		chatManagement := app.Group("/chat")
 		{
-			app.Get("/ws", webSocHandler.WsConnection)
+			chatManagement.Get("/onetoonechats/:recipientid", webSocHandler.GetOneToOneChats)
+			chatManagement.Get("/recentchatprofiles/", webSocHandler.GetrecentchatprofileDetails)
+
+
+			chatManagement.Use(HttptoWsConnectionUpgrader)
+			{
+				chatManagement.Get("/ws", webSocHandler.WsConnection)
+
+			}
 
 		}
+
 	}
 }
 
