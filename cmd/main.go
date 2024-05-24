@@ -25,6 +25,11 @@ func main() {
 	app.Use(logger.New(logger.Config{TimeFormat: "2006/01/02 15:04:05"}))
 
 	app.Use(func(c *fiber.Ctx) error {
+
+		// Log additional request details
+		log.Printf("\nHeaders: %v,\n Host: %s,\n HTTP Version: %s,\n Method: %s,\t Protocol: %s,\t Query: %s,\t Remote Addr: %s,\t URL: %s",
+			c.GetReqHeaders(), c.Hostname(), c.Protocol(), c.Method(), c.Protocol(), c.OriginalURL(), c.IP(), c.OriginalURL())
+
 		apiKey := c.Get("x-api-Key")
 		if apiKey != config.ApiKey {
 			return c.Status(fiber.StatusUnauthorized).
