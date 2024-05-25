@@ -1,6 +1,8 @@
 package router_chatNcallSvc_apigw
 
 import (
+	"fmt"
+
 	middleware_auth_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/auth_svc/middleware"
 	handler_chatNcallSvc_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/chatNcall_svc/handler"
 	responsemodels_postnrel_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/postNrelation_svc/infrastructure/models/responsemodels"
@@ -19,7 +21,6 @@ func ChatNcallRoutes(app *fiber.App,
 			chatManagement.Get("/onetoonechats/:recipientid", webSocHandler.GetOneToOneChats)
 			chatManagement.Get("/recentchatprofiles/", webSocHandler.GetrecentchatprofileDetails)
 
-
 			chatManagement.Use(HttptoWsConnectionUpgrader)
 			{
 				chatManagement.Get("/ws", webSocHandler.WsConnection)
@@ -36,6 +37,8 @@ func HttptoWsConnectionUpgrader(ctx *fiber.Ctx) error {
 		ctx.Locals("allowed", true)
 		return ctx.Next()
 	}
+
+	fmt.Println("-------------websocket.IsWebSocketUpgrade(ctx)------------,returned false:::::::::::::")
 	return ctx.Status(fiber.ErrUpgradeRequired.Code).
 		JSON(responsemodels_postnrel_apigw.CommonResponse{
 			StatusCode: fiber.ErrUpgradeRequired.Code,
