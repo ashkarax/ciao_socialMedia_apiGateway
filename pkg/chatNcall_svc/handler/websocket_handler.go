@@ -25,7 +25,10 @@ type ChatWebSocHandler struct {
 }
 
 func NewChatWebSocHandler(client *pb.ChatNCallServiceClient, config *config_apigw.Config) *ChatWebSocHandler {
-	locationInd, _ := time.LoadLocation("Asia/Kolkata")
+	locationInd, err := time.LoadLocation("Asia/Kolkata")
+	if err != nil {
+		fmt.Println("----------------------error fetching location:", err)
+	}
 	return &ChatWebSocHandler{Client: *client,
 		LocationInd: locationInd,
 		Config:      config,

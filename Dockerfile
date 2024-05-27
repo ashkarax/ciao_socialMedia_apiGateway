@@ -7,12 +7,13 @@ RUN  go mod download
 COPY . .
 RUN go build -o ./cmd/ciaoApiGatewayExec ./cmd/main.go
 
-FROM scratch
+FROM alpine:latest
 WORKDIR /project/ciao/
 
 
 COPY --from=stage1 /project/ciao/cmd/ciaoApiGatewayExec ./cmd/
 COPY --from=stage1 /project/ciao/dev.env ./
+RUN apk add tzdata
 
 EXPOSE 3000
 ENTRYPOINT [ "/project/ciao/cmd/ciaoApiGatewayExec" ]
