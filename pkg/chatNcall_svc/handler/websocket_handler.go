@@ -245,7 +245,7 @@ func (svc *ChatWebSocHandler) GetrecentchatprofileDetails(ctx *fiber.Ctx) error 
 	})
 
 	if err != nil {
-		fmt.Println("----------chatNcall service down--------")
+		fmt.Println("----------chatNcall service down--------,err:", err)
 		return ctx.Status(fiber.StatusServiceUnavailable).
 			JSON(responsemodels_postnrel_apigw.CommonResponse{
 				StatusCode: fiber.StatusServiceUnavailable,
@@ -255,6 +255,7 @@ func (svc *ChatWebSocHandler) GetrecentchatprofileDetails(ctx *fiber.Ctx) error 
 	}
 
 	if resp.ErrorMessage != "" {
+		fmt.Println("-----------------------", resp.ErrorMessage)
 		return ctx.Status(fiber.StatusBadRequest).
 			JSON(responsemodels_postnrel_apigw.CommonResponse{
 				StatusCode: fiber.StatusBadRequest,
