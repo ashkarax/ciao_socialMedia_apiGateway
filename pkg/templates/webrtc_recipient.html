@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebRTC Video Call (Receiver)</title>
+</head>
+<body>
+  <h1>WebRTC Video Call (Receiver)</h1>
+  <video id="localVideo" autoplay muted></video>
+  <video id="remoteVideo"></video>
+  <textarea id="offerInput" rows="5" placeholder="Enter Offer Here"></textarea>
+  <button id="startCall">Start Call</button>
+  <script>
+    const localVideo = document.getElementById('localVideo');
+const remoteVideo = document.getElementById('remoteVideo');
+const offerInput = document.getElementById('offerInput');
+const startCallButton = document.getElementById('startCall');
+
+let localStream;
+let remotePeerConnection;
+
+startCallButton.addEventListener('click', initiateCall);
+
+navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+  .then(stream => {
+    localStream = stream;
+    localVideo.srcObject = stream;
+  })
+  .catch(error => {
+    console.error('Error accessing media devices:', error);
+  });
+
+function initiateCall() {
+  const offer = JSON.parse(offerInput.value); // Parse the offer string from the input
+
+  remotePeerConnection = new RTCPeerConnection();
+  remotePeerConnection.onicecandidate = handleIceCandidate;
+  remotePeerConnection.ontrack = handleRemoteStream;
+  remotePeerConnection.onaddstream = handleRemoteStream; // For some browsers (compatibility)
+
+  localStream.getTracks().forEach(track => remotePeerConnection.addTrack(track));
+
+  remotePeerConnection.setRemoteDescription(offer)
+    .then(() => {
+      console.log('Remote Description set successfully');
+      return remotePeerConnection.createAnswer();
+    })
+    .then(answer => {
+      console.log('Local Answer:', answer);
+      remotePeerConnection.setLocalDescription(answer);
+      // Send the answer to the initiator through your signaling mechanism (not shown here)
+    })
+    .catch(error => {
+      console.error('Error creating answer:', error);
+    });
+}
+
+function handleIceCandidate(event) {
+  if (event.candidate) {
+    // Send the ICE candidate to the initiator through your signaling mechanism (not shown here)
+  }
+}
+
+function handleRemoteStream(event) {
+  remoteVideo.srcObject = event.stream || event.streams[0]; // For compatibility
+}
+
+  </script>
+</body>
+</html>

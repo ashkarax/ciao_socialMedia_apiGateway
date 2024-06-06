@@ -14,6 +14,7 @@ type Config struct {
 	ChatSvcUrl         string `mapstructure:"CHAT_SVC_URL"`
 	KafkaPort          string `mapstructure:"KAFKA_PORT"`
 	KafkaTopicOneToOne string `mapstructure:"KAFKA_TOPIC_1"`
+	NotifSvcUrl        string `mapstructure:"NOTIF_SVC_URL"`
 }
 
 func LoadConfig() (*Config, error) {

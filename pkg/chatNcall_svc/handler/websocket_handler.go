@@ -155,7 +155,7 @@ func (svc *ChatWebSocHandler) OnetoOneMessage(msgModel *requestmodels_chatNcallS
 }
 
 func (svc *ChatWebSocHandler) KafkaProducerUpdateOneToOneMessage(message *requestmodels_chatNcallSvc_apigw.OnetoOneMessageRequest) error {
-	fmt.Println("---------------form kafkaProducer:", *message)
+	fmt.Println("---------------to kafkaProducer:", *message)
 
 	configs := sarama.NewConfig()
 	configs.Producer.Return.Successes = true

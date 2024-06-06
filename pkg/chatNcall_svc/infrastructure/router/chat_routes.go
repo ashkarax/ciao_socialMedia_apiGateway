@@ -33,6 +33,8 @@ func ChatNcallRoutes(app *fiber.App,
 }
 
 func HttptoWsConnectionUpgrader(ctx *fiber.Ctx) error {
+	fmt.Println("--------------------------------------")
+
 	if websocket.IsWebSocketUpgrade(ctx) {
 		ctx.Locals("allowed", true)
 		return ctx.Next()

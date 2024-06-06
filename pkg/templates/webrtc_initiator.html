@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Initiator (Peer-1)</title>
+</head>
+<body>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>WebRTC Video Call</title>
+    </head>
+    <body>
+      <h1>WebRTC Video Call</h1>
+      <video id="localVideo" autoplay muted></video>
+      <video id="remoteVideo"></video>
+      <button id="startCall">Start Call</button>
+    
+
+    <script>
+      const localVideo = document.getElementById('localVideo');
+const remoteVideo = document.getElementById('remoteVideo');
+const startCallButton = document.getElementById('startCall');
+
+let localStream;
+let remotePeerConnection;
+
+startCallButton.addEventListener('click', initiateCall);
+
+navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+  .then(stream => {
+    localStream = stream;
+    localVideo.srcObject = stream;
+  })
+  .catch(error => {
+    console.error('Error accessing media devices:', error);
+  });
+
+function initiateCall() {
+  remotePeerConnection = new RTCPeerConnection();
+  remotePeerConnection.onicecandidate = handleIceCandidate;
+  remotePeerConnection.ontrack = handleRemoteStream;
+
+  localStream.getTracks().forEach(track => remotePeerConnection.addTrack(track));
+
+  remotePeerConnection.createOffer()
+    .then(offer => {
+      console.log('Local Offer:', offer);
+      remotePeerConnection.setLocalDescription(offer);
+      // Send the offer to the other peer through your signaling mechanism (not shown here)
+    })
+    .catch(error => {
+      console.error('Error creating offer:', error);
+    });
+}
+
+function handleIceCandidate(event) {
+  if (event.candidate) {
+    // Send the ICE candidate to the other peer through your signaling mechanism (not shown here)
+  }
+}
+
+function handleRemoteStream(event) {
+  remoteVideo.srcObject = event.streams[0];
+}
+
+    </script>
+</body>
+</html>
