@@ -6,10 +6,12 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strconv"
 	"time"
 
 	"github.com/IBM/sarama"
 	requestmodels_chatNcallSvc_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/chatNcall_svc/infrastructure/models/request_models"
+	responsemodels_chatNcall "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/chatNcall_svc/infrastructure/models/response_models"
 	"github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/chatNcall_svc/infrastructure/pb"
 	config_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/config"
 	responsemodels_postnrel_apigw "github.com/ashkarax/ciao_socialMedia_apiGateway/pkg/postNrelation_svc/infrastructure/models/responsemodels"
@@ -74,8 +76,6 @@ func (svc *ChatWebSocHandler) WsConnection(ctx *fiber.Ctx) error {
 				if ve, ok := err.(validator.ValidationErrors); ok {
 					for _, e := range ve {
 						switch e.Field() {
-						case "RecipientID":
-							sendErrMessageWS(userIdStr, errors.New("no RecipientID found in input"))
 						case "Type":
 							sendErrMessageWS(userIdStr, errors.New("no Type found in input"))
 						}
@@ -88,6 +88,8 @@ func (svc *ChatWebSocHandler) WsConnection(ctx *fiber.Ctx) error {
 				svc.OnetoOneMessage(&messageModel)
 			case "TypingStatus":
 				svc.TypingStatus(&messageModel)
+			case "OneToMany":
+				svc.OnetoMany(&messageModel)
 			default:
 				sendErrMessageWS(userIdStr, errors.New("message Type should be OneToOne,OneToMany,DeleteMessage,UpdateSeenStatus or TypingStatus ,no other types allowed"))
 			}
@@ -98,6 +100,9 @@ func (svc *ChatWebSocHandler) WsConnection(ctx *fiber.Ctx) error {
 }
 
 func (svc *ChatWebSocHandler) TypingStatus(msgModel *requestmodels_chatNcallSvc_apigw.MessageRequest) {
+	if msgModel.RecipientID == "" {
+		sendErrMessageWS(msgModel.SenderID, errors.New("no RecipientID found in input"))
+	}
 	var MsgModel requestmodels_chatNcallSvc_apigw.TypingStatusRequest
 
 	MsgModel.SenderID = msgModel.SenderID
@@ -121,6 +126,9 @@ func (svc *ChatWebSocHandler) TypingStatus(msgModel *requestmodels_chatNcallSvc_
 }
 
 func (svc *ChatWebSocHandler) OnetoOneMessage(msgModel *requestmodels_chatNcallSvc_apigw.MessageRequest) {
+	if msgModel.RecipientID == "" {
+		sendErrMessageWS(msgModel.SenderID, errors.New("no RecipientID found in input"))
+	}
 	if msgModel.Content == "" || len(msgModel.Content) > 100 {
 		sendErrMessageWS(msgModel.SenderID, errors.New("message content should be less than 100 words "))
 		return
@@ -150,12 +158,72 @@ func (svc *ChatWebSocHandler) OnetoOneMessage(msgModel *requestmodels_chatNcallS
 		}
 		OneToOneMsgModel.Status = "send"
 	}
+
+	fmt.Println("------check status is pending or send--------", OneToOneMsgModel)
 	fmt.Println("Adding to kafkaproducer for transporting to service and storing")
 	svc.KafkaProducerUpdateOneToOneMessage(&OneToOneMsgModel)
 }
 
+func (svc *ChatWebSocHandler) OnetoMany(msgModel *requestmodels_chatNcallSvc_apigw.MessageRequest) {
+	if msgModel.GroupID == "" {
+		sendErrMessageWS(msgModel.SenderID, errors.New("no GroupID found in input"))
+		return
+	}
+	if msgModel.Content == "" || len(msgModel.Content) > 100 {
+		sendErrMessageWS(msgModel.SenderID, errors.New("message content should be less than 100 words "))
+		return
+	}
+
+	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+	resp, err := svc.Client.GetGroupMembersInfo(context, &pb.RequestGroupMembersInfo{GroupID: msgModel.GroupID})
+	if err != nil {
+		log.Println("-----from handler:OnetoMany() chatNcall service down while calling GetGroupMembersInfo()---")
+		sendErrMessageWS(msgModel.SenderID, err)
+		return
+	}
+	if resp.ErrorMessage != "" {
+		sendErrMessageWS(msgModel.SenderID, errors.New(resp.ErrorMessage))
+		return
+	}
+
+	var OneToManyMsgModel requestmodels_chatNcallSvc_apigw.OnetoManyMessageRequest
+	OneToManyMsgModel.SenderID = msgModel.SenderID
+	OneToManyMsgModel.GroupID = msgModel.GroupID
+	OneToManyMsgModel.Content = msgModel.Content
+	OneToManyMsgModel.TimeStamp = msgModel.TimeStamp
+	OneToManyMsgModel.Status = "pending"
+	OneToManyMsgModel.Type = msgModel.Type
+
+	for i := range resp.GroupMembers {
+		if (resp.GroupMembers)[i] == msgModel.SenderID {
+			continue
+		}
+		conn, ok := UserSocketMap[(resp.GroupMembers[i])]
+		if ok {
+			OneToManyMsgModel.TimeStamp = OneToManyMsgModel.TimeStamp.In(svc.LocationInd)
+			data, err := MarshalStructJson(OneToManyMsgModel)
+			if err != nil {
+				sendErrMessageWS(OneToManyMsgModel.SenderID, err)
+				return
+			}
+			err = conn.WriteMessage(websocket.TextMessage, *data)
+			if err != nil {
+				fmt.Println("error sending to recipient", err)
+				return
+			}
+			OneToManyMsgModel.Status = "send"
+		}
+	}
+
+	fmt.Println("------check status is pending or send--------", OneToManyMsgModel)
+	fmt.Println("Adding to kafkaproducer for transporting to service and storing")
+	svc.KafkaProducerUpdateOneToManyMessage(&OneToManyMsgModel)
+
+}
+
 func (svc *ChatWebSocHandler) KafkaProducerUpdateOneToOneMessage(message *requestmodels_chatNcallSvc_apigw.OnetoOneMessageRequest) error {
-	fmt.Println("---------------to kafkaProducer:", *message)
+	fmt.Println("---------------to KafkaProducerUpdateOneToOneMessage:", *message)
 
 	configs := sarama.NewConfig()
 	configs.Producer.Return.Successes = true
@@ -170,6 +238,31 @@ func (svc *ChatWebSocHandler) KafkaProducerUpdateOneToOneMessage(message *reques
 
 	msg := &sarama.ProducerMessage{Topic: svc.Config.KafkaTopicOneToOne,
 		Key:   sarama.StringEncoder(message.RecipientID),
+		Value: sarama.StringEncoder(*msgJson)}
+	partition, offset, err := producer.SendMessage(msg)
+	if err != nil {
+		fmt.Println("err sending message to kafkaproducer ", err)
+	}
+	log.Printf("[producer] partition id: %d; offset:%d, value: %v\n", partition, offset, msg)
+	return nil
+}
+
+func (svc *ChatWebSocHandler) KafkaProducerUpdateOneToManyMessage(message *requestmodels_chatNcallSvc_apigw.OnetoManyMessageRequest) error {
+	fmt.Println("---------------to KafkaProducerUpdateOneToManyMessage:", *message)
+
+	configs := sarama.NewConfig()
+	configs.Producer.Return.Successes = true
+	configs.Producer.Retry.Max = 5
+
+	producer, err := sarama.NewSyncProducer([]string{svc.Config.KafkaPort}, configs)
+	if err != nil {
+		return err
+	}
+
+	msgJson, _ := MarshalStructJson(message)
+
+	msg := &sarama.ProducerMessage{Topic: svc.Config.KafkaTopicOneToMany,
+		Key:   sarama.StringEncoder(message.GroupID),
 		Value: sarama.StringEncoder(*msgJson)}
 	partition, offset, err := producer.SendMessage(msg)
 	if err != nil {
@@ -274,7 +367,135 @@ func (svc *ChatWebSocHandler) GetrecentchatprofileDetails(ctx *fiber.Ctx) error 
 
 }
 
-func (svc *ChatWebSocHandler) OnetoMany(msgModel *requestmodels_chatNcallSvc_apigw.MessageRequest) {
+func (svc *ChatWebSocHandler) CreateNewGroup(ctx *fiber.Ctx) error {
+	var newGroupData requestmodels_chatNcallSvc_apigw.NewGroupInfo
+	userId := ctx.Locals("userId")
+	userIdInt, _ := strconv.Atoi(fmt.Sprint(userId))
+
+	if err := ctx.BodyParser(&newGroupData); err != nil {
+		return ctx.Status(fiber.ErrBadRequest.Code).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.ErrBadRequest.Code,
+				Message:    "can't create Group(possible-reason:invalid/no json input)",
+				Error:      err.Error(),
+			})
+	}
+
+	newGroupData.CreatorID = fmt.Sprint(userId)
+	found := false
+	for _, member := range newGroupData.GroupMembers {
+		if member == uint64(userIdInt) {
+			found = true
+			break
+		}
+	}
+	if !found {
+		newGroupData.GroupMembers = append(newGroupData.GroupMembers, uint64(userIdInt))
+	}
+
+	var validationReponse responsemodels_chatNcall.NewGroupInfo
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(newGroupData)
+	if err != nil {
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range ve {
+				switch e.Field() {
+				case "GroupName":
+					validationReponse.GroupName = "should contain less than 20 letters"
+				case "GroupMembers":
+					validationReponse.GroupMembers = "Should be unique,maximum 12 members and id should be a number"
+				}
+			}
+			return ctx.Status(fiber.ErrBadRequest.Code).
+				JSON(responsemodels_postnrel_apigw.CommonResponse{
+					StatusCode: fiber.ErrBadRequest.Code,
+					Message:    "can't create group",
+					Data:       validationReponse,
+					Error:      err.Error(),
+				})
+		}
+	}
+
+	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	resp, err := svc.Client.CreateNewGroup(context, &pb.RequestNewGroup{
+		GroupName:    newGroupData.GroupName,
+		GroupMembers: newGroupData.GroupMembers,
+		CreatorID:    newGroupData.CreatorID,
+		CreatedAt:    fmt.Sprint(time.Now()),
+	})
+
+	if err != nil {
+		log.Println("-----error: from handler:CreateNewGroup(),chatNcall service down while calling CreateNewGroup()")
+
+		return ctx.Status(fiber.StatusServiceUnavailable).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusServiceUnavailable,
+				Message:    "can't create group",
+				Error:      err.Error(),
+			})
+	}
+
+	if resp.ErrorMessage != "" {
+		return ctx.Status(fiber.StatusBadRequest).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusBadRequest,
+				Message:    "can't create group",
+				Data:       resp,
+				Error:      resp.ErrorMessage,
+			})
+	}
+
+	return ctx.Status(fiber.StatusOK).
+		JSON(responsemodels_postnrel_apigw.CommonResponse{
+			StatusCode: fiber.StatusOK,
+			Message:    "group created succesfully",
+		})
+
+}
+
+func (svc *ChatWebSocHandler) GetUserGroupsAndLastMessage(ctx *fiber.Ctx) error {
+	userId := ctx.Locals("userId")
+	limit, offset := ctx.Query("limit", "12"), ctx.Query("offset", "0")
+
+	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	resp, err := svc.Client.GetUserGroupChatSummary(context, &pb.RequestGroupChatSummary{
+		UserID: fmt.Sprint(userId),
+		Limit:  limit,
+		Offset: offset,
+	})
+
+	if err != nil {
+		log.Println("-----error: from handler:GetUserGroupsAndLastMessage(),chatNcall service down while calling GetUserGroupChatSummary()")
+
+		return ctx.Status(fiber.StatusServiceUnavailable).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusServiceUnavailable,
+				Message:    "failed to fetch groupchat summary",
+				Error:      err.Error(),
+			})
+	}
+
+	if resp.ErrorMessage != "" {
+		return ctx.Status(fiber.StatusBadRequest).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusBadRequest,
+				Message:    "failed to fetch groupchat summary",
+				Data:       resp,
+				Error:      resp.ErrorMessage,
+			})
+	}
+
+	return ctx.Status(fiber.StatusOK).
+		JSON(responsemodels_postnrel_apigw.CommonResponse{
+			StatusCode: fiber.StatusOK,
+			Data:       resp.SingleEntity,
+			Message:    "groupchat summary fetched succesfully",
+		})
 
 }
 
@@ -291,4 +512,199 @@ func MarshalStructJson(msgModel interface{}) (*[]byte, error) {
 		return nil, err
 	}
 	return &data, nil
+}
+
+func (svc *ChatWebSocHandler) GetGroupChats(ctx *fiber.Ctx) error {
+	userId := ctx.Locals("userId")
+
+	groupId := ctx.Params("groupid")
+	limit, offset := ctx.Query("limit", "12"), ctx.Query("offset", "0")
+
+	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	resp, err := svc.Client.GetOneToManyChats(context, &pb.RequestGetOneToManyChats{
+		UserID:  fmt.Sprint(userId),
+		GroupID: groupId,
+		Limit:   limit,
+		Offset:  offset,
+	})
+
+	if err != nil {
+		log.Println("-----error: from handler:GetGroupChats(),chatNcall service down while calling GetOneToManyChats()")
+
+		return ctx.Status(fiber.StatusServiceUnavailable).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusServiceUnavailable,
+				Message:    "failed to fetch groupchat",
+				Error:      err.Error(),
+			})
+	}
+
+	if resp.ErrorMessage != "" {
+		return ctx.Status(fiber.StatusBadRequest).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusBadRequest,
+				Message:    "failed to fetch groupchat",
+				Data:       resp,
+				Error:      resp.ErrorMessage,
+			})
+	}
+
+	return ctx.Status(fiber.StatusOK).
+		JSON(responsemodels_postnrel_apigw.CommonResponse{
+			StatusCode: fiber.StatusOK,
+			Data:       resp.Chat,
+			Message:    "groupchat fetched succesfully",
+		})
+}
+
+func (svc *ChatWebSocHandler) AddMembersToGroup(ctx *fiber.Ctx) error {
+	userId := ctx.Locals("userId")
+
+	var addMembersInput requestmodels_chatNcallSvc_apigw.AddNewMembersToGroup
+
+	if err := ctx.BodyParser(&addMembersInput); err != nil {
+		return ctx.Status(fiber.ErrBadRequest.Code).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.ErrBadRequest.Code,
+				Message:    "can't add new GroupMembers(possible-reason:invalid/no json input)",
+				Error:      err.Error(),
+			})
+	}
+
+	var validationReponse responsemodels_chatNcall.AddNewMembersToGroupResponse
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(addMembersInput)
+	if err != nil {
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range ve {
+				switch e.Field() {
+				case "GroupID":
+					validationReponse.GroupID = "should contain less than 35 characters"
+				case "GroupMembers":
+					validationReponse.GroupMembers = "Should be unique,maximum 12 members and id should be a number"
+				}
+			}
+			return ctx.Status(fiber.ErrBadRequest.Code).
+				JSON(responsemodels_postnrel_apigw.CommonResponse{
+					StatusCode: fiber.ErrBadRequest.Code,
+					Message:    "can't add new GroupMembers",
+					Data:       validationReponse,
+					Error:      err.Error(),
+				})
+		}
+	}
+
+	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	resp, err := svc.Client.AddMembersToGroup(context, &pb.RequestAddGroupMembers{
+		UserID:    fmt.Sprint(userId),
+		GroupID:   addMembersInput.GroupID,
+		MemberIDs: addMembersInput.GroupMembers,
+	})
+
+	if err != nil {
+		log.Println("-----error: from handler:AddMembersToGroup(),chatNcall service down while calling AddMembersToGroup()")
+
+		return ctx.Status(fiber.StatusServiceUnavailable).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusServiceUnavailable,
+				Message:    "can't add new GroupMembers",
+				Error:      err.Error(),
+			})
+	}
+
+	if resp.ErrorMessage != "" {
+		return ctx.Status(fiber.StatusBadRequest).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusBadRequest,
+				Message:    "can't add new GroupMembers",
+				Data:       resp,
+				Error:      resp.ErrorMessage,
+			})
+	}
+
+	return ctx.Status(fiber.StatusOK).
+		JSON(responsemodels_postnrel_apigw.CommonResponse{
+			StatusCode: fiber.StatusOK,
+			Message:    "new groupmembers added succesfully",
+		})
+
+}
+
+func (svc *ChatWebSocHandler) RemoveAMemberFromGroup(ctx *fiber.Ctx) error {
+	userId := ctx.Locals("userId")
+
+	var inputData requestmodels_chatNcallSvc_apigw.RemoveMemberFromGroup
+
+	if err := ctx.BodyParser(&inputData); err != nil {
+		return ctx.Status(fiber.ErrBadRequest.Code).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.ErrBadRequest.Code,
+				Message:    "can't remove GroupMembers(possible-reason:invalid/no json input)",
+				Error:      err.Error(),
+			})
+	}
+
+	var validationReponse responsemodels_chatNcall.RemoveMemberFromGroup
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(validationReponse)
+	if err != nil {
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range ve {
+				switch e.Field() {
+				case "GroupID":
+					validationReponse.GroupID = "should contain less than 35 characters"
+				case "MemberID":
+					validationReponse.MemberID = "Should be a valid id"
+				}
+			}
+			return ctx.Status(fiber.ErrBadRequest.Code).
+				JSON(responsemodels_postnrel_apigw.CommonResponse{
+					StatusCode: fiber.ErrBadRequest.Code,
+					Message:    "can't remove GroupMember",
+					Data:       validationReponse,
+					Error:      err.Error(),
+				})
+		}
+	}
+
+	context, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	resp, err := svc.Client.RemoveMemberFromGroup(context, &pb.RequestRemoveGroupMember{
+		UserID:   fmt.Sprint(userId),
+		GroupID:  inputData.GroupID,
+		MemberID: inputData.MemberID,
+	})
+
+	if err != nil {
+		log.Println("-----error: from handler:RemoveAMemberFromGroup(),chatNcall service down while calling RemoveMemberFromGroup()")
+
+		return ctx.Status(fiber.StatusServiceUnavailable).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusServiceUnavailable,
+				Message:    "can't remove GroupMember",
+				Error:      err.Error(),
+			})
+	}
+
+	if resp.ErrorMessage != "" {
+		return ctx.Status(fiber.StatusBadRequest).
+			JSON(responsemodels_postnrel_apigw.CommonResponse{
+				StatusCode: fiber.StatusBadRequest,
+				Message:    "can't remove GroupMember",
+				Data:       resp,
+				Error:      resp.ErrorMessage,
+			})
+	}
+
+	return ctx.Status(fiber.StatusOK).
+		JSON(responsemodels_postnrel_apigw.CommonResponse{
+			StatusCode: fiber.StatusOK,
+			Message:    "groupmember removed succesfully",
+		})
+
 }

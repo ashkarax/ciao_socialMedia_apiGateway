@@ -28,13 +28,19 @@ func ChatNcallRoutes(app *fiber.App,
 			}
 
 		}
+		groupChatManagemanent := app.Group("/groupchat")
+		{
+			groupChatManagemanent.Post("/", webSocHandler.CreateNewGroup)
+			groupChatManagemanent.Post("/add", webSocHandler.AddMembersToGroup)
+			groupChatManagemanent.Post("/remove", webSocHandler.RemoveAMemberFromGroup)
+			groupChatManagemanent.Get("/summary", webSocHandler.GetUserGroupsAndLastMessage)
+			groupChatManagemanent.Get("/:groupid", webSocHandler.GetGroupChats)
+		}
 
 	}
 }
 
 func HttptoWsConnectionUpgrader(ctx *fiber.Ctx) error {
-	fmt.Println("--------------------------------------")
-
 	if websocket.IsWebSocketUpgrade(ctx) {
 		ctx.Locals("allowed", true)
 		return ctx.Next()
