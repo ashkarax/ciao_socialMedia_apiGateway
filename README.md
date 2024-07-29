@@ -1,4 +1,4 @@
-o Ciao-SocialMedia:MicroService:
+<h3> Ciao-SocialMedia:MicroService: </h3>
 - Developed a social media application similar to Instagram using Golang and Fiber.
 <br>
   - Architected with microservices (5-services): <br><br>
