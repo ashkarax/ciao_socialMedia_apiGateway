@@ -1,7 +1,7 @@
 o Ciao-SocialMedia:MicroService:
 - Developed a social media application similar to Instagram using Golang and Fiber.
-
-  - Architected with microservices (5-services): <br>
+<br>
+  - Architected with microservices (5-services): <br><br>
   ● API Gateway 
     [GitHub Link](https://github.com/ashkarax/ciao_socialMedia_apiGateway)  <br>
   ● Auth Service
@@ -11,7 +11,7 @@ o Ciao-SocialMedia:MicroService:
   ● Chat & Call Service
     [GitHub Link](https://github.com/ashkarax/ciao_socialMedia_chatNcallService) <br>
   ● Notification Service
-    [GitHub Link](https://github.com/ashkarax/ciao_socialMedai_notificationSvc) <br><br>
+    [GitHub Link](https://github.com/ashkarax/ciao_socialMedai_notificationSvc) <br>
   ● Kubernetes Manifests:
     [Kubernetes manifests](https://github.com/ashkarax/ciao_socialMedai_notificationSvc)
 
