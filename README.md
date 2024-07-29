@@ -13,7 +13,7 @@ o Ciao-SocialMedia:MicroService:
   ● Notification Service
     [GitHub Link](https://github.com/ashkarax/ciao_socialMedai_notificationSvc) <br>
   ● Kubernetes Manifests:
-    [Kubernetes manifests](https://github.com/ashkarax/ciao_socialMedai_notificationSvc)
+    [Kubernetes manifests](https://github.com/ashkarax/ciao_socialMedai_notificationSvc)<br><br>
 
 
 - Implemented API key, access token, and refresh token for authentication
